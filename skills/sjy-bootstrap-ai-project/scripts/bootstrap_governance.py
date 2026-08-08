@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """Deterministic installer for the sjy AI engineering governance blocks."""
 
-from __future__ import annotations
-
 import argparse
 import hashlib
 import json
@@ -11,10 +9,10 @@ from pathlib import Path
 import re
 import stat
 import tempfile
-from typing import Callable, Mapping
+from typing import Callable, Dict, List, Mapping, Optional, Tuple
 
 
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 BEGIN_PREFIX = "<!-- BEGIN SJY-AI-ENGINEERING-MANAGED"
 END_MARKER = "<!-- END SJY-AI-ENGINEERING-MANAGED -->"
 END_PREFIX = "<!-- END SJY-AI-ENGINEERING-MANAGED"
@@ -50,14 +48,16 @@ def _asset_body(target: str) -> str:
     return canonical_body(ASSET_PATHS[target].read_text(encoding="utf-8"))
 
 
-def _targets(root: Path, include_claude: bool) -> list[str]:
+def _targets(root: Path, include_claude: bool) -> List[str]:
     names = ["AGENTS.md"]
     if include_claude or (root / "CLAUDE.md").exists() or (root / "CLAUDE.md").is_symlink():
         names.append("CLAUDE.md")
     return names
 
 
-def _parse_semver(value: str) -> tuple[int, int, int, tuple[str, ...] | None] | None:
+def _parse_semver(
+    value: str,
+) -> Optional[Tuple[int, int, int, Optional[Tuple[str, ...]]]]:
     match = SEMVER_RE.fullmatch(value)
     if not match:
         return None
@@ -91,9 +91,9 @@ def _compare_semver(left: str, right: str) -> int:
     return -1 if len(left_pre) < len(right_pre) else 1
 
 
-def _line_records(text: str) -> list[tuple[int, int, int, str]]:
+def _line_records(text: str) -> List[Tuple[int, int, int, str]]:
     """Return (line start, content end, full end, content) for every line."""
-    records: list[tuple[int, int, int, str]] = []
+    records: List[Tuple[int, int, int, str]] = []
     position = 0
     for match in re.finditer(r".*?(?:\r\n|\n|\r|$)", text):
         raw = match.group(0)
@@ -125,8 +125,8 @@ def _inspect_target(path: Path, target: str) -> dict:
     except UnicodeDecodeError:
         return {"kind": "malformed", "diagnostic": f"INVALID_UTF8:{target}"}
 
-    begins: list[tuple[int, int, int, str, str]] = []
-    ends: list[tuple[int, int, int]] = []
+    begins: List[Tuple[int, int, int, str, str]] = []
+    ends: List[Tuple[int, int, int]] = []
     corrupt_marker = False
     for start, content_end, full_end, line in _line_records(text):
         # A UTF-8 BOM is part of the unmanaged prefix, not of a marker.
@@ -171,12 +171,17 @@ def _inspect_target(path: Path, target: str) -> dict:
     }
 
 
-def _equivalent_directories(root: Path) -> dict[str, str]:
+def _equivalent_directories(root: Path) -> Dict[str, str]:
     candidates = {
-        "decisions": ("docs/architecture-decisions", "architecture-decisions", "decisions"),
-        "reviews": ("docs/code-reviews", "code-reviews", "reviews"),
+        "decisions": (
+            "docs/decisions",
+            "docs/architecture-decisions",
+            "architecture-decisions",
+            "decisions",
+        ),
+        "reviews": ("docs/reviews", "docs/code-reviews", "code-reviews", "reviews"),
     }
-    found: dict[str, str] = {}
+    found: Dict[str, str] = {}
     for kind, paths in candidates.items():
         for relative in paths:
             if (root / relative).is_dir():
@@ -202,7 +207,7 @@ def inspect_repository(root, include_claude: bool = False) -> dict:
     root_path = _discover_repository_root(root)
     targets = _targets(root_path, include_claude)
     details = {target: _inspect_target(root_path / target, target) for target in targets}
-    diagnostics: list[str] = []
+    diagnostics: List[str] = []
     if not _is_git_repository(root_path):
         diagnostics.append("NOT_A_GIT_REPOSITORY")
     diagnostics.extend(
@@ -290,12 +295,21 @@ def _append_block(detail: dict, target: str) -> bytes:
     return raw + separator + block + (eol if terminal_newline else b"")
 
 
+def _default_text_mode() -> Optional[int]:
+    """Return the platform's umask-adjusted, non-executable text-file mode."""
+    if os.name == "nt":
+        return None
+    current_umask = os.umask(0)
+    os.umask(current_umask)
+    return 0o666 & ~current_umask
+
+
 def apply_changes(changes: Mapping[Path, bytes], replace_fn: Callable = os.replace):
     """Atomically replace each staged target and restore prior targets on failure."""
-    staged: dict[Path, Path] = {}
-    backups: dict[Path, Path | None] = {}
-    replaced: list[Path] = []
-    current_target: Path | None = None
+    staged: Dict[Path, Path] = {}
+    backups: Dict[Path, Optional[Path]] = {}
+    replaced: List[Path] = []
+    current_target: Optional[Path] = None
     try:
         for target, data in changes.items():
             target = Path(target)
@@ -318,13 +332,16 @@ def apply_changes(changes: Mapping[Path, bytes], replace_fn: Callable = os.repla
                 os.chmod(backups[target], original_mode)
             else:
                 backups[target] = None
+                default_mode = _default_text_mode()
+                if default_mode is not None:
+                    os.chmod(staged[target], default_mode)
 
         for target, stage in staged.items():
             current_target = target
             replace_fn(str(stage), str(target))
             replaced.append(target)
     except Exception as exc:
-        rollback_errors: list[Exception] = []
+        rollback_errors: List[Exception] = []
         for target in reversed(replaced):
             backup = backups[target]
             try:
@@ -349,14 +366,14 @@ def apply_changes(changes: Mapping[Path, bytes], replace_fn: Callable = os.repla
                 pass
 
 
-def _operation_result(base: dict, result: str, changed_files: list[str]) -> dict:
+def _operation_result(base: dict, result: str, changed_files: List[str]) -> dict:
     response = dict(base)
     response["result"] = result
     response["changed_files"] = changed_files
     return response
 
 
-def _restore_snapshots(snapshots: Mapping[Path, tuple]) -> None:
+def _restore_snapshots(snapshots: Mapping[Path, Tuple]) -> None:
     restore = {path: raw for path, (raw, _mode) in snapshots.items() if raw is not None}
     if restore:
         apply_changes(restore)
@@ -367,7 +384,9 @@ def _restore_snapshots(snapshots: Mapping[Path, tuple]) -> None:
             os.chmod(path, mode)
 
 
-def _verify_mutation(root_path: Path, targets: list[str], snapshots: Mapping[Path, tuple]) -> dict:
+def _verify_mutation(
+    root_path: Path, targets: List[str], snapshots: Mapping[Path, Tuple]
+) -> dict:
     final = inspect_repository(root_path, include_claude="CLAUDE.md" in targets)
     valid = final["state"] == "CURRENT"
     if valid:
@@ -399,8 +418,8 @@ def initialize_repository(root, include_claude: bool = False) -> dict:
     if inspected["state"] != "UNINITIALIZED":
         return _operation_result(inspected, inspected["result"], [])
 
-    changes: dict[Path, bytes] = {}
-    snapshots: dict[Path, tuple] = {}
+    changes: Dict[Path, bytes] = {}
+    snapshots: Dict[Path, Tuple] = {}
     for target in inspected["targets"]:
         path = root_path / target
         detail = _inspect_target(path, target)
@@ -426,7 +445,7 @@ def upgrade_repository(root, include_claude: bool = False) -> dict:
     return _operation_result(inspected, inspected["result"], [])
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("inspect", "initialize", "upgrade"))
     parser.add_argument("--root", required=True)
