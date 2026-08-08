@@ -21,6 +21,9 @@ Review                        => Codex in a fresh review context
 Escalation                    => Codex
 ```
 
+Project-specific role mappings take precedence. Mappings that differ from these
+defaults are valid overrides, not conflicts.
+
 ## Workflow
 
 Work from an approved Spec to an approved Implementation Plan, implementation,

@@ -1,6 +1,10 @@
 ---
 name: sjy-bootstrap-ai-project
 description: Use when explicitly inspecting or initializing repository-level AI engineering governance in a new or existing software project, or checking governance previously installed by this skill.
+metadata:
+  author: sjy1998
+  version: "1.0.1"
+  compatibility: Requires Python 3.8 or later.
 ---
 
 # Bootstrap AI Project Governance
@@ -13,8 +17,8 @@ Initialize concise, repository-owned governance without replacing existing proje
 
 1. Locate the intended repository root. If multiple plausible scopes exist, report the ambiguity and do not write.
 2. Read existing `AGENTS.md`, applicable nested instructions, `CLAUDE.md`, and equivalent decision/review directories.
-3. Determine targets: always manage root `AGENTS.md`; manage `CLAUDE.md` when it exists, Claude is in the project role mapping, or the user explicitly requests it.
-4. Check semantic conflicts before running a mutation. Explicit project rules override the default Codex/Claude mapping. If existing roles, Git policy, approval authority, or workflow directly conflicts with the managed defaults, report `CONFLICT` and stop.
+3. Determine targets: always manage root `AGENTS.md`. Under the default mapping Claude is the Implementation Agent, so pass `--include-claude` unless explicit project rules override Claude out of every active role. Also manage an existing `CLAUDE.md` or include it when the user explicitly requests it.
+4. Check semantic conflicts before running a mutation. Project-specific role mappings that differ from the default mapping are overrides, not conflicts. Report `CONFLICT` only when explicit project rules must all apply but cannot be satisfied together, when a rule contradicts a non-overridable safety boundary, or when governance constraints such as Project Owner authority cannot coexist.
 5. Run the deterministic inspector using the absolute path to this Skill:
 
 ```text
@@ -46,7 +50,7 @@ python <skill-dir>/scripts/bootstrap_governance.py initialize --root <repository
 ## Governance installed by V1
 
 - Human Project Owner retains final control of material governance and architecture decisions.
-- Default mapping: Codex handles governance/architecture and fresh-context milestone review; Claude handles implementation; project-specific mappings override it.
+- Default mapping: Codex handles governance/architecture and fresh-context milestone review; Claude handles implementation. Project-specific mappings take precedence even when they reverse or replace these defaults.
 - Local implementation decisions remain autonomous. Architecture, schema, public interfaces, technology choices, approved plans, and high-risk rules require escalation.
 - Milestone review uses Repository evidence and a Review Package containing scope, commit range when applicable, completed work, verification, deviations, and known issues.
 - Repository state, not chat history, supports Agent handoff.
@@ -62,6 +66,7 @@ python <skill-dir>/scripts/bootstrap_governance.py initialize --root <repository
 ## Common mistakes
 
 - Treating different installed target versions as `UPGRADE_AVAILABLE` instead of `PARTIAL`.
-- Applying default roles over explicit project roles.
+- Treating an explicit project role override as a semantic conflict.
+- Omitting `--include-claude` while the default mapping still makes Claude the Implementation Agent.
 - Editing a drifted block because the version marker still matches.
 - Continuing into brainstorming or implementation after bootstrap completion.

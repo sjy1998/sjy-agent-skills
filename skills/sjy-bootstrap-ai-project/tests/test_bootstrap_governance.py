@@ -1,5 +1,4 @@
-from __future__ import annotations
-
+import ast
 import codecs
 import contextlib
 import hashlib
@@ -8,6 +7,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import stat
 import subprocess
 import sys
@@ -20,7 +20,8 @@ SKILL_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = SKILL_ROOT / "scripts" / "bootstrap_governance.py"
 AGENTS_ASSET = SKILL_ROOT / "assets" / "agents-managed.md"
 CLAUDE_ASSET = SKILL_ROOT / "assets" / "claude-managed.md"
-VERSION = "1.0.0"
+SKILL_PATH = SKILL_ROOT / "SKILL.md"
+VERSION = "1.0.1"
 
 
 def load_bootstrap():
@@ -84,6 +85,8 @@ class BootstrapGovernanceTests(unittest.TestCase):
             inspected = self.bootstrap.inspect_repository(root, include_claude=True)
             self.assertEqual("CURRENT", inspected["state"])
             self.assertEqual("NO_CHANGES", inspected["result"])
+            self.assertIn("version=1.0.1", (root / "AGENTS.md").read_text(encoding="utf-8"))
+            self.assertIn("version=1.0.1", (root / "CLAUDE.md").read_text(encoding="utf-8"))
 
     def test_initialize_preserves_existing_content_bom_and_crlf(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -253,7 +256,7 @@ class BootstrapGovernanceTests(unittest.TestCase):
             prefix = "# Custom before\n\n"
             suffix = "\n# Custom after\n"
             (root / "AGENTS.md").write_text(
-                prefix + fixture_block("old body", "0.9.0") + suffix,
+                prefix + fixture_block("old body", "1.0.0") + suffix,
                 encoding="utf-8",
             )
 
@@ -261,12 +264,14 @@ class BootstrapGovernanceTests(unittest.TestCase):
             written = (root / "AGENTS.md").read_text(encoding="utf-8")
 
             self.assertEqual("UPGRADE_AVAILABLE", result["result"])
-            self.assertEqual(prefix + fixture_block("old body", "0.9.0") + suffix, written)
+            self.assertEqual(prefix + fixture_block("old body", "1.0.0") + suffix, written)
             self.assertEqual("UPGRADE_AVAILABLE", self.bootstrap.inspect_repository(root)["state"])
 
     def test_equivalent_directories_are_reported_without_creating_defaults(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
+            (root / "docs" / "decisions").mkdir(parents=True)
+            (root / "docs" / "reviews").mkdir(parents=True)
             (root / "docs" / "architecture-decisions").mkdir(parents=True)
             (root / "docs" / "code-reviews").mkdir(parents=True)
 
@@ -274,13 +279,37 @@ class BootstrapGovernanceTests(unittest.TestCase):
 
             self.assertEqual(
                 {
-                    "decisions": "docs/architecture-decisions",
-                    "reviews": "docs/code-reviews",
+                    "decisions": "docs/decisions",
+                    "reviews": "docs/reviews",
                 },
                 result["equivalent_directories"],
             )
-            self.assertFalse((root / "docs" / "decisions").exists())
-            self.assertFalse((root / "docs" / "reviews").exists())
+            self.assertTrue((root / "docs" / "decisions").is_dir())
+            self.assertTrue((root / "docs" / "reviews").is_dir())
+
+    def test_equivalent_directory_detection_does_not_create_directories(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+
+            result = self.bootstrap.inspect_repository(root)
+
+            self.assertEqual({}, result["equivalent_directories"])
+            self.assertFalse((root / "docs").exists())
+
+    @unittest.skipIf(os.name == "nt", "POSIX mode semantics are unavailable on Windows")
+    def test_new_targets_respect_umask_and_are_not_executable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            previous_umask = os.umask(0o027)
+            try:
+                self.bootstrap.initialize_repository(root, include_claude=True)
+            finally:
+                os.umask(previous_umask)
+
+            for name in ("AGENTS.md", "CLAUDE.md"):
+                mode = stat.S_IMODE((root / name).stat().st_mode)
+                self.assertEqual(0o640, mode)
+                self.assertEqual(0, mode & 0o111)
 
     def test_symlinked_target_is_refused(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -372,6 +401,7 @@ class BootstrapGovernanceTests(unittest.TestCase):
     def test_assets_contain_required_durable_governance_boundaries(self):
         agents = AGENTS_ASSET.read_text(encoding="utf-8")
         claude = CLAUDE_ASSET.read_text(encoding="utf-8")
+        skill = SKILL_PATH.read_text(encoding="utf-8")
 
         for text in (
             "External systems are authoritative within their own domains",
@@ -384,6 +414,44 @@ class BootstrapGovernanceTests(unittest.TestCase):
             self.assertIn(text, agents)
         for text in ("recent commits", "repeated verification failure", "cannot reliably determine correctness"):
             self.assertIn(text, claude)
+        self.assertIn("role mappings that differ from the default mapping are overrides, not conflicts", skill)
+        self.assertIn("pass `--include-claude` unless explicit project rules override Claude out", skill)
+
+    def test_skill_metadata_version_matches_runtime_version(self):
+        skill = SKILL_PATH.read_text(encoding="utf-8")
+        version = re.search(r'^  version: "([^"]+)"$', skill, re.MULTILINE)
+        self.assertIsNotNone(version)
+        self.assertEqual(self.bootstrap.VERSION, version.group(1))
+        self.assertIn("compatibility: Requires Python 3.8 or later.", skill)
+
+    def test_python_38_compatible_annotation_syntax(self):
+        for path in (SCRIPT_PATH, Path(__file__)):
+            source = path.read_text(encoding="utf-8")
+            tree = ast.parse(source, filename=str(path), feature_version=8)
+            annotations = []
+            for node in ast.walk(tree):
+                if isinstance(node, ast.AnnAssign):
+                    annotations.append(node.annotation)
+                elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    if node.returns is not None:
+                        annotations.append(node.returns)
+                    annotations.extend(
+                        arg.annotation
+                        for arg in list(node.args.posonlyargs)
+                        + list(node.args.args)
+                        + list(node.args.kwonlyargs)
+                        if arg.annotation is not None
+                    )
+            for annotation in annotations:
+                for node in ast.walk(annotation):
+                    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+                        self.fail(f"PEP 604 union is not Python 3.8 compatible in {path}")
+                    if (
+                        isinstance(node, ast.Subscript)
+                        and isinstance(node.value, ast.Name)
+                        and node.value.id in {"list", "dict", "tuple", "set", "frozenset", "type"}
+                    ):
+                        self.fail(f"PEP 585 generic is not Python 3.8 compatible in {path}")
 
     def test_cli_inspect_json_uses_stable_contract(self):
         with tempfile.TemporaryDirectory() as tmp:
