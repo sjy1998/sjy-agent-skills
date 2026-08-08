@@ -1,0 +1,4 @@
+interface:
+  display_name: "SJY Bootstrap AI Project"
+  short_description: "Bootstrap repository AI governance safely"
+  default_prompt: "Use $sjy-bootstrap-ai-project to inspect and initialize AI engineering governance in the current repository."
