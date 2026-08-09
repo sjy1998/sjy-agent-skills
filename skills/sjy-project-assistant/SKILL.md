@@ -1,9 +1,9 @@
 ---
 name: sjy-project-assistant
-description: Lightweight repository-native AI engineering governance and continuity for initializing, adopting, resuming, routing, and minimally synchronizing AI Coding projects across contexts and tools.
+description: Use when entering a repository in a fresh context, adopting an existing project for AI collaboration, resuming unfinished project work, determining the next major responsibility, or preparing cross-tool continuation.
 metadata:
   author: sjy1998
-  version: "1.0.1"
+  version: "1.0.2"
   compatibility: Requires Python 3.10 or later.
 ---
 

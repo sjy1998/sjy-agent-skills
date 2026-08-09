@@ -24,11 +24,19 @@ For fresh or resumed work:
 5. read artifacts referenced by STATE;
 6. expand only when needed.
 
-Executor priority:
+For the current Responsibility:
 1. explicit Project Owner instruction;
 2. STATE current executor;
-3. PROJECT preferred executor;
+3. PROJECT preferred executor for the current Responsibility;
 4. Skill default.
+
+When routing to a different next Responsibility:
+1. explicit Project Owner instruction;
+2. PROJECT preferred executor for the next Responsibility;
+3. current executor as fallback when the next Responsibility is unmapped;
+4. Skill default.
+
+STATE Executor describes current work and does not override a PROJECT mapping for a different next Responsibility.
 
 When the next major responsibility prefers a different tool, make the state resumable, reference existing artifacts, recommend the preferred executor, and stop before automatically entering the next major responsibility unless explicitly asked to continue.
 

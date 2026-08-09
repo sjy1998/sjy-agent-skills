@@ -1,8 +1,8 @@
-# SJY Project Assistant V1.0.1 Semantic Eval
+# SJY Project Assistant V1.0.2 Semantic Eval
 
 Date: 2026-08-09
 
-Skill version: 1.0.1
+Skill version: 1.0.2
 
 ## Environment
 
@@ -130,11 +130,27 @@ Environment: Codex
 Result: PASS
 
 Observed:
+- Current/generated AGENTS governance was included alongside PROJECT, STATE, and the completed planning artifact; the decision was not inferred from SKILL alone.
 - Planning completion was recognized as a Responsibility boundary.
 - The next Responsibility resolved to Implementation.
 - The PROJECT mapping for next-responsibility Implementation selected Claude before the current STATE Executor fallback.
 - STATE was made resumable with the completed plan reference and exact resume action.
 - No implementation started automatically.
+
+Notes:
+- Regression baseline: FAIL before the V1.0.2 correction because the installable AGENTS block exposed one unified executor priority and could make the current Codex executor appear to outrank the next-responsibility Claude mapping.
+- Corrected managed-block and valid-fixture contract: PASS.
+
+## Scenario: Unmapped Next Responsibility
+
+Environment: Codex
+Result: PASS
+
+Observed:
+- The explicit Project Owner instruction remains first when present.
+- With no PROJECT mapping for the different next Responsibility, the current STATE Executor is used as the fallback.
+- The Skill default is considered only after that current-executor fallback.
+- No executor preference or new routing state is invented.
 
 Notes:
 - None.
@@ -183,6 +199,6 @@ Notes:
 
 ## Summary
 
-- Codex: 12 PASS, 0 PARTIAL, 0 FAIL.
+- Codex: 13 PASS, 0 PARTIAL, 0 FAIL.
 - Claude Code: PENDING because the CLI is unavailable.
 - Overall: PASS for the available required runtime; cross-tool Claude confirmation remains pending under the Specification's allowed fallback.
