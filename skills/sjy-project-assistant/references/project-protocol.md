@@ -5,9 +5,11 @@
 `PROJECT.md` is a stable project context map.
 
 Core information:
-- project identity / purpose;
+- non-empty project Name and Purpose;
 - key references / locators;
 - AI Collaboration responsibility preferences.
+
+`## AI Collaboration` is required. Missing `## Key References` remains a warning under the weak schema.
 
 Optional information:
 - technical context;
@@ -35,6 +37,10 @@ Optional information:
 
 For Idle state, `Relevant` may be absent.
 
+For active work, Objective, Responsibility, and Executor must be non-empty, and `## Current Work` and `## Next` must contain non-empty bodies. Missing `## Relevant` remains a warning.
+
+A valid Idle state uses the complete combination `Objective: None`, `Responsibility: Idle`, and `Executor: None`. A partial or contradictory Idle combination is invalid.
+
 Do not use STATE as a task database, roadmap, changelog, handoff history, checkpoint history, or Git log.
 
 ## Responsibility and Executors
@@ -43,11 +49,19 @@ Responsibility describes the kind of active work.
 PROJECT Preferred Executor is a long-term project preference.
 STATE Executor is the current actual executor.
 
-Executor precedence:
+Current Responsibility executor precedence:
 1. explicit Project Owner instruction;
 2. STATE current Executor;
-3. PROJECT Preferred Executor;
+3. PROJECT Preferred Executor for the current Responsibility;
 4. Skill default.
+
+Different next Responsibility preferred-executor precedence:
+1. explicit Project Owner instruction;
+2. PROJECT Preferred Executor for the next Responsibility;
+3. current Executor as fallback when the next Responsibility is unmapped;
+4. Skill default.
+
+STATE Executor records current reality and does not override the PROJECT mapping for a different next Responsibility.
 
 ## Resume Contract
 

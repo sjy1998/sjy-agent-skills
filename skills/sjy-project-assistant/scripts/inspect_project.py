@@ -73,14 +73,11 @@ def _has_project_boundary(path: Path) -> bool:
 
 
 def _is_complete_explicit_root(path: Path) -> bool:
-    ai_project = path / ".ai-project"
-    has_continuity = (ai_project / "PROJECT.md").is_file() and (ai_project / "STATE.md").is_file()
-    has_existing_project_signals = (
+    return (
         (path / "AGENTS.md").is_file()
         and (path / "README.md").is_file()
         and any((path / name).is_file() for name in MANIFEST_NAMES)
     )
-    return has_continuity or has_existing_project_signals
 
 
 def _discover_repository_root(path: Path) -> Path:
@@ -127,6 +124,7 @@ def inspect_repository(path: Path) -> dict[str, object]:
         "managed": managed,
         "files": files,
         "signals": {
+            "governance_present": files["agents"] is not None,
             "manifests": manifests,
             "docs": docs_exists,
             "tests": tests_exists,

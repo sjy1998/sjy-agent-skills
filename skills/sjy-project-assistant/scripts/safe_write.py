@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import stat
 import tempfile
 from pathlib import Path
 
@@ -24,12 +25,20 @@ def replace_managed_block(
     if begin_count > 1:
         raise ManagedBlockError("Multiple managed blocks are ambiguous")
 
-    normalized_block = block.strip() + "\n"
+    crlf_count = existing.count("\r\n")
+    lf_count = existing.count("\n") - crlf_count
+    newline = "\r\n" if existing and crlf_count > lf_count else "\n"
+    normalized_block = block.replace("\r\n", "\n").replace("\r", "\n").strip()
+    normalized_block = normalized_block.replace("\n", newline) + newline
 
     if begin_count == 0:
         if not existing:
             return normalized_block
-        separator = "" if existing.endswith("\n\n") else ("\n" if existing.endswith("\n") else "\n\n")
+        separator = (
+            ""
+            if existing.endswith(newline * 2)
+            else (newline if existing.endswith(newline) else newline * 2)
+        )
         return existing + separator + normalized_block
 
     begin = existing.index(begin_marker)
@@ -38,10 +47,10 @@ def replace_managed_block(
         raise ManagedBlockError("Managed block markers are out of order")
     end = end_start + len(end_marker)
 
-    replacement = normalized_block.rstrip("\n")
+    replacement = normalized_block[: -len(newline)]
     result = existing[:begin] + replacement + existing[end:]
-    if existing.endswith("\n") and not result.endswith("\n"):
-        result += "\n"
+    if existing.endswith(newline) and not result.endswith(newline):
+        result += newline
     return result
 
 
@@ -65,8 +74,12 @@ def atomic_write_text(
 
     path.parent.mkdir(parents=True, exist_ok=True)
 
+    existing_mode = stat.S_IMODE(path.stat().st_mode) if path.exists() else None
+
     if backup and path.exists():
         backup_path = path.with_suffix(path.suffix + ".bak")
+        if backup_path.is_symlink():
+            raise ValueError(f"Backup target is a symbolic link: {backup_path}")
         shutil.copy2(path, backup_path)
 
     fd, temp_name = tempfile.mkstemp(
@@ -81,6 +94,8 @@ def atomic_write_text(
             handle.write(content)
             handle.flush()
             os.fsync(handle.fileno())
+        if existing_mode is not None:
+            temp_path.chmod(existing_mode)
         os.replace(temp_path, path)
     except Exception:
         try:

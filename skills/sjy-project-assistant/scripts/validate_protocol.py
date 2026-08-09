@@ -24,12 +24,24 @@ def _diagnostic(level: str, code: str, message: str) -> Diagnostic:
     return Diagnostic(level=level, code=code, message=message)
 
 
+def _field_value(text: str, field: str) -> str | None:
+    match = re.search(rf"^{re.escape(field)}:[ \t]*([^\r\n]*?)[ \t]*\r?$", text, flags=re.MULTILINE)
+    return match.group(1) if match else None
+
+
+def _section_body(text: str, heading: str) -> str | None:
+    section = re.search(
+        rf"^## {re.escape(heading)}[ \t]*\r?\n(.*?)(?=^##\s|\Z)",
+        text,
+        flags=re.MULTILINE | re.DOTALL,
+    )
+    return section.group(1).strip() if section else None
+
+
 def validate_project_text(text: str) -> list[Diagnostic]:
     """Validate the required, deliberately lightweight PROJECT.md structure."""
     checks = (
         (r"^# Project\s*$", "PROJECT_HEADING_MISSING", "PROJECT.md is missing the '# Project' heading."),
-        (r"^Name:[^\r\n]*\r?$", "PROJECT_NAME_MISSING", "PROJECT.md is missing a Name field."),
-        (r"^Purpose:[^\r\n]*\r?$", "PROJECT_PURPOSE_MISSING", "PROJECT.md is missing a Purpose field."),
         (
             r"^## AI Collaboration\s*$",
             "PROJECT_AI_COLLABORATION_MISSING",
@@ -41,6 +53,14 @@ def validate_project_text(text: str) -> list[Diagnostic]:
         for pattern, code, message in checks
         if not _has_line(text, pattern)
     ]
+    for field, code in (
+        ("Name", "PROJECT_NAME_MISSING"),
+        ("Purpose", "PROJECT_PURPOSE_MISSING"),
+    ):
+        if not (_field_value(text, field) or "").strip():
+            diagnostics.append(
+                _diagnostic("ERROR", code, f"PROJECT.md is missing a non-empty {field} field.")
+            )
     if not _has_line(text, r"^## Key References\s*$"):
         diagnostics.append(
             _diagnostic(
@@ -50,11 +70,6 @@ def validate_project_text(text: str) -> list[Diagnostic]:
             )
         )
     return diagnostics
-
-
-def _field_value(text: str, field: str) -> str | None:
-    match = re.search(rf"^{re.escape(field)}:[ \t]*([^\r\n]*?)[ \t]*\r?$", text, flags=re.MULTILINE)
-    return match.group(1) if match else None
 
 
 def _relevant_items(text: str) -> list[str]:
@@ -92,13 +107,6 @@ def validate_state_text(
     """Validate the required, deliberately lightweight STATE.md structure."""
     checks = (
         (r"^# Current State\s*$", "STATE_HEADING_MISSING", "STATE.md is missing the '# Current State' heading."),
-        (r"^Objective:[^\r\n]*\r?$", "STATE_OBJECTIVE_MISSING", "STATE.md is missing an Objective field."),
-        (
-            r"^Responsibility:[^\r\n]*\r?$",
-            "STATE_RESPONSIBILITY_MISSING",
-            "STATE.md is missing a Responsibility field.",
-        ),
-        (r"^Executor:[^\r\n]*\r?$", "STATE_EXECUTOR_MISSING", "STATE.md is missing an Executor field."),
         (
             r"^## Current Work\s*$",
             "STATE_CURRENT_WORK_MISSING",
@@ -114,7 +122,41 @@ def validate_state_text(
 
     objective = _field_value(text, "Objective")
     responsibility = _field_value(text, "Responsibility")
-    is_idle = (objective or "").strip().lower() == "none" or (responsibility or "").strip().lower() == "idle"
+    executor = _field_value(text, "Executor")
+    for field, value, code in (
+        ("Objective", objective, "STATE_OBJECTIVE_MISSING"),
+        ("Responsibility", responsibility, "STATE_RESPONSIBILITY_MISSING"),
+        ("Executor", executor, "STATE_EXECUTOR_MISSING"),
+    ):
+        if not (value or "").strip():
+            diagnostics.append(
+                _diagnostic("ERROR", code, f"STATE.md is missing a non-empty {field} field.")
+            )
+
+    for heading, code in (
+        ("Current Work", "STATE_CURRENT_WORK_EMPTY"),
+        ("Next", "STATE_NEXT_EMPTY"),
+    ):
+        body = _section_body(text, heading)
+        if body == "":
+            diagnostics.append(
+                _diagnostic("ERROR", code, f"STATE.md section '## {heading}' must have a non-empty body.")
+            )
+
+    normalized_idle = (
+        (objective or "").strip().lower() == "none",
+        (responsibility or "").strip().lower() == "idle",
+        (executor or "").strip().lower() == "none",
+    )
+    is_idle = all(normalized_idle)
+    if any(normalized_idle) and not is_idle:
+        diagnostics.append(
+            _diagnostic(
+                "ERROR",
+                "STATE_IDLE_INCONSISTENT",
+                "Idle STATE requires Objective: None, Responsibility: Idle, and Executor: None together.",
+            )
+        )
     has_relevant = _has_line(text, r"^## Relevant\s*$")
     if not is_idle and not has_relevant:
         diagnostics.append(

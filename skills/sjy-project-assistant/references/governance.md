@@ -8,7 +8,7 @@ Project Assistant manages only its marked AGENTS block. The block begins with
 
 ## Creating or integrating AGENTS
 
-When `AGENTS.md` is absent, preview the proposed file before creating it and write the managed governance block only after approval. When an `AGENTS.md` already exists, preview the minimal insertion or replacement of the marked block, preserve all unmarked content, and do not duplicate compatible governance.
+When `AGENTS.md` is absent, preview the proposed file before creating it and write `assets/AGENTS.managed-block.md` only after approval. When an `AGENTS.md` already exists, preview the minimal insertion or replacement of the marked block, preserve all unmarked content, and do not duplicate compatible governance. Use `scripts/safe_write.py` for either managed-block mutation rather than an equivalent direct write.
 
 Do not copy existing engineering guides into AGENTS. Keep existing `CONTRIBUTING`, `DEVELOPMENT`, README, or equivalent documentation as their authoritative homes and reference them when relevant.
 

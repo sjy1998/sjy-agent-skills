@@ -1,3 +1,5 @@
+import os
+import stat
 from pathlib import Path
 
 import pytest
@@ -34,6 +36,33 @@ def test_replaces_existing_managed_block_and_preserves_surrounding_text():
     assert "old" not in result
     assert result.startswith("before")
     assert result.rstrip().endswith("after")
+
+
+def test_insert_preserves_existing_crlf_newlines():
+    existing = "# Existing Rules\r\n\r\nKeep this.\r\n"
+
+    result = replace_managed_block(existing, BLOCK, BEGIN, END)
+
+    assert "\n" not in result.replace("\r\n", "")
+    assert f"{BEGIN}\r\nmanaged\r\n{END}\r\n" in result
+
+
+def test_replace_preserves_existing_crlf_newlines():
+    existing = f"before\r\n\r\n{BEGIN}\r\nold\r\n{END}\r\n\r\nafter\r\n"
+
+    result = replace_managed_block(existing, BLOCK, BEGIN, END)
+
+    assert "\n" not in result.replace("\r\n", "")
+    assert f"{BEGIN}\r\nmanaged\r\n{END}" in result
+
+
+def test_insert_preserves_existing_lf_newlines():
+    existing = "# Existing Rules\n\nKeep this.\n"
+
+    result = replace_managed_block(existing, BLOCK.replace("\n", "\r\n"), BEGIN, END)
+
+    assert "\r\n" not in result
+    assert f"{BEGIN}\nmanaged\n{END}\n" in result
 
 
 def test_second_application_is_idempotent():
@@ -129,6 +158,29 @@ def test_atomic_write_refuses_symlink_leaf_to_out_of_root_referent(tmp_path: Pat
 
     assert target.is_symlink()
     assert referent.read_text(encoding="utf-8") == "outside\n"
+
+
+def test_atomic_write_refuses_backup_symlink(tmp_path: Path, monkeypatch):
+    target = tmp_path / "AGENTS.md"
+    target.write_text("old\n", encoding="utf-8")
+    backup_path = target.with_suffix(target.suffix + ".bak")
+    monkeypatch.setattr(Path, "is_symlink", lambda path: path == backup_path)
+
+    with pytest.raises(ValueError, match="Backup target is a symbolic link"):
+        atomic_write_text(target, "new\n", backup=True)
+
+    assert target.read_text(encoding="utf-8") == "old\n"
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX mode semantics are unavailable on Windows")
+def test_atomic_write_preserves_existing_file_mode(tmp_path: Path):
+    target = tmp_path / "AGENTS.md"
+    target.write_text("old\n", encoding="utf-8")
+    target.chmod(0o640)
+
+    atomic_write_text(target, "new\n")
+
+    assert stat.S_IMODE(target.stat().st_mode) == 0o640
 
 
 def _symlink_or_skip(link: Path, referent: Path) -> None:
