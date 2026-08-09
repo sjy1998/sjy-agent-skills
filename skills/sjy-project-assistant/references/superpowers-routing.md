@@ -19,6 +19,8 @@ Do not switch tools between every implementation task. Prefer tool handoff at ma
 
 If the preferred executor differs from the current environment after a major responsibility completes:
 
+Resolve that preferred executor from the PROJECT mapping for the next Responsibility. The STATE Executor for the completed Responsibility does not override it; use the current Executor only as fallback when the next Responsibility has no mapping.
+
 1. make STATE resumable;
 2. reference produced artifacts;
 3. recommend the preferred executor;

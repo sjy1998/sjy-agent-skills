@@ -235,21 +235,36 @@ def test_cli_reports_invalid_utf8_input_as_unreadable(tmp_path: Path, capsys):
     assert "ERROR INPUT_UNREADABLE:" in capsys.readouterr().out
 
 
-def test_empty_field_values_count_as_present_under_weak_schema():
-    project_text = """# Project
-
-Purpose: Demo project.
-
-## Key References
-
-## AI Collaboration
+def test_empty_project_name_is_error():
+    text = """# Project
 
 Name:
-"""
-    state_text = """# Current State
+Purpose: Demo project.
 
-Objective: Demo
+## AI Collaboration
+"""
+
+    assert "PROJECT_NAME_MISSING" in codes(validate_project_text(text))
+
+
+def test_empty_project_purpose_is_error():
+    text = """# Project
+
+Name: Demo
+Purpose:
+
+## AI Collaboration
+"""
+
+    assert "PROJECT_PURPOSE_MISSING" in codes(validate_project_text(text))
+
+
+def test_empty_state_objective_is_error():
+    text = """# Current State
+
+Objective:
 Responsibility: Implementation
+Executor: Claude
 
 ## Current Work
 
@@ -258,12 +273,101 @@ Working.
 ## Next
 
 Continue.
-
-Executor:
 """
 
-    assert "PROJECT_NAME_MISSING" not in codes(validate_project_text(project_text))
-    assert "STATE_EXECUTOR_MISSING" not in codes(validate_state_text(state_text))
+    assert "STATE_OBJECTIVE_MISSING" in codes(validate_state_text(text))
+
+
+def test_empty_state_responsibility_is_error():
+    text = """# Current State
+
+Objective: Demo
+Responsibility:
+Executor: Claude
+
+## Current Work
+
+Working.
+
+## Next
+
+Continue.
+"""
+
+    assert "STATE_RESPONSIBILITY_MISSING" in codes(validate_state_text(text))
+
+
+def test_empty_state_executor_is_error():
+    text = """# Current State
+
+Objective: Demo
+Responsibility: Implementation
+Executor:
+
+## Current Work
+
+Working.
+
+## Next
+
+Continue.
+"""
+
+    assert "STATE_EXECUTOR_MISSING" in codes(validate_state_text(text))
+
+
+def test_empty_current_work_body_is_error():
+    text = """# Current State
+
+Objective: Demo
+Responsibility: Implementation
+Executor: Claude
+
+## Current Work
+
+## Next
+
+Continue.
+"""
+
+    assert "STATE_CURRENT_WORK_EMPTY" in codes(validate_state_text(text))
+
+
+def test_empty_next_body_is_error():
+    text = """# Current State
+
+Objective: Demo
+Responsibility: Implementation
+Executor: Claude
+
+## Current Work
+
+Working.
+
+## Next
+"""
+
+    assert "STATE_NEXT_EMPTY" in codes(validate_state_text(text))
+
+
+def test_partial_idle_state_is_error():
+    text = """# Current State
+
+Objective: Build authentication
+Responsibility: Idle
+Executor: Claude
+
+## Current Work
+
+Working.
+
+## Next
+
+Continue.
+"""
+
+    assert "STATE_IDLE_INCONSISTENT" in codes(validate_state_text(text))
+    assert "ERROR" in levels(validate_state_text(text))
 
 
 def test_valid_crlf_documents_preserve_required_field_detection():

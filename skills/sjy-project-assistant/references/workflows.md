@@ -19,7 +19,7 @@ Use only these user-facing workflows:
 - Preview before mutation.
 - Adopt current reality.
 - Question budget: default maximum 3 Project Owner decision rounds.
-- High-risk unknown → must ask; do not infer or silently choose it. This mandatory branch remains within the same maximum 3 decision-round budget.
+- Exceed the default budget only when additional Project Owner input is required to proceed safely or avoid a material governance or repository error. Do not use this safety exception to expand ordinary questioning.
 
 ## Internal workflows
 
@@ -27,17 +27,17 @@ Use only these user-facing workflows:
 
 Use Initialize for an unmanaged project whose available evidence and Project Owner intent support initial setup.
 
-`Inspect → infer → ask only missing high-impact facts → recommend Responsibility Map → confirm → preview → initialize → recommend next workflow.`
+`Deterministic inspect → semantic understanding → ask only missing high-impact facts → recommend Responsibility Map → Owner confirmation → preview → deterministic safe mutation → protocol validation → recommend next workflow.`
 
-Infer facts from the repository first. Propose the smallest useful Responsibility Map and the minimal governance and continuity assets. After confirmation, preview the exact mutations before writing. Do not turn ordinary questions or read-only orientation into initialization.
+Run `scripts/inspect_project.py` for repository facts, then let the LLM interpret those facts and propose the smallest useful Responsibility Map. After confirmation and an exact preview, use `assets/AGENTS.managed-block.md` with `scripts/safe_write.py` for AGENTS mutation and use the PROJECT / STATE templates as their starting structure. Run `scripts/validate_protocol.py` after writing continuity files. Do not turn ordinary questions or read-only orientation into initialization.
 
 ### Adopt
 
 Use Adopt for an existing project that needs minimal Project Assistant governance and continuity integration.
 
-`Reconnaissance → understand → map → governance mapping → responsibility recommendation → Governance/Continuity/Routing gap analysis → minimal adoption proposal → confirm → minimal adopt → resume current reality.`
+`Deterministic reconnaissance → semantic gap analysis → responsibility recommendation → minimal adoption proposal → Owner confirmation → safe managed-block update → minimal PROJECT / STATE write → protocol validation → resume current reality.`
 
-Reuse existing repository evidence and preserve established practices. The gap analysis is limited to governance, continuity, and routing. **Adopt does not force the project back into design/planning.** If implementation is already active, resume implementation; if no work is active, record or preserve an Idle state rather than inventing work.
+Run `scripts/inspect_project.py` for factual reconnaissance. The LLM analyzes only Governance, Continuity, and Routing gaps and preserves established practices. After confirmation, use `scripts/safe_write.py` for the managed AGENTS block, use the PROJECT / STATE templates as starting structures for minimal writes, and run `scripts/validate_protocol.py`. **Adopt does not force the project back into design/planning.** If implementation is already active, resume implementation; if no work is active, record or preserve an Idle state rather than inventing work.
 
 ### Resume
 
@@ -47,7 +47,7 @@ Use Resume for a managed project or for Continue after the relevant project stat
 
 `Governance → PROJECT → STATE → live repository/Git → STATE Relevant → expand only when needed.`
 
-Start with applicable governance, then use PROJECT and STATE as the compact map of durable context and active work. Inspect live repository facts and Git when it is available, then read only the artifacts referenced by STATE that are needed for the next action. Expand beyond this path only when the evidence is insufficient.
+Start with applicable governance, then use PROJECT and STATE as the compact map of durable context and active work. Run `scripts/inspect_project.py` for live repository and Git facts, then read only the artifacts referenced by STATE that are needed for the next action. Expand beyond this path only when the evidence is insufficient. If continuity exists but `signals.governance_present` is false, report the missing root governance entry and follow the Governance issue path in `exceptions.md`; do not hide the gap behind `managed: true`.
 
 Assess whether STATE is CURRENT, STALE, or CONFLICT using repository evidence. A reliably explainable divergence is STALE and can continue from the latest reality; an unreconcilable divergence requires preservation and Project Owner guidance.
 
@@ -63,12 +63,12 @@ Guide / Route is the internal action used after enough context is known to recom
 
 `Determine Next Responsibility → Preferred Executor → Recommended Workflow → short Reason.`
 
-Apply executor precedence: explicit Project Owner instruction, then STATE current Executor, then PROJECT Preferred Executor, then the Skill default. Responsibility and executor are distinct: an executor is a preference or current assignment, not permanent ownership of a responsibility. Use `superpowers-routing.md` when selecting an engineering method would help.
+For the current Responsibility, apply explicit Project Owner instruction, STATE current Executor, PROJECT mapping for the current Responsibility, then the Skill default. When routing to a different next Responsibility, apply explicit Project Owner instruction, PROJECT mapping for that next Responsibility, current Executor as fallback when unmapped, then the Skill default. Responsibility and executor are distinct: an executor is a preference or current assignment, not permanent ownership of a responsibility. Use `superpowers-routing.md` when selecting an engineering method would help.
 
 ### Sync
 
 Sync is the internal action for the smallest write that preserves future resumability.
 
-`Inspect facts → compare → identify durable changes → update affected sections only → verify resumability.`
+`Inspect facts → LLM semantic decision → identify durable changes → minimal file update → protocol validation when PROJECT / STATE changed → verify resumability.`
 
-Update PROJECT only for long-lived project facts. Update STATE only when a fresh context would otherwise misunderstand the active objective, evidence, or next major action. Prefer no write when the current PROJECT and STATE already allow reliable resumption.
+Update PROJECT only for long-lived project facts. Update STATE only when a fresh context would otherwise misunderstand the active objective, evidence, or next major action. Run `scripts/validate_protocol.py` after either continuity file changes. Prefer no write when the current PROJECT and STATE already allow reliable resumption.

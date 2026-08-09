@@ -7,7 +7,7 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Preconditions: An unmanaged, Greenfield-like repository has no Project Assistant continuity assets.
 - User intent: Initialize lightweight project governance and continuity.
 - Expected files read: Existing repository files and engineering entry points; inspect before asking.
-- Expected semantic decision: Infer available facts, but a high-risk unknown must be asked rather than inferred; keep that mandatory branch within the default three-decision-round budget, recommend a minimal Responsibility Map, and preview the proposal.
+- Expected semantic decision: Infer available facts, but a high-risk unknown must be asked rather than inferred; exceed the default three-decision-round budget only when more Project Owner input is required for safety or to avoid a material governance/repository error, recommend a minimal Responsibility Map, and preview the proposal.
 - Expected mutation: After Project Owner confirmation, create `AGENTS.md`, `.ai-project/PROJECT.md`, and `.ai-project/STATE.md`; create a tool adapter only when the project actually needs one.
 - Expected stop / handoff behavior: Recommend the next engineering workflow and stop without automatically entering implementation.
 
@@ -226,3 +226,21 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Expected semantic decision: Answer directly using progressive disclosure; no mandatory Project Brief, routing, or full repository scan.
 - Expected mutation: None.
 - Expected stop / handoff behavior: Return the answer without inventing a workflow transition.
+
+## 26. Unmapped Next Responsibility
+
+- Preconditions: The current Executor is Codex and PROJECT has no Preferred Executor mapping for the next Documentation responsibility.
+- User intent: Route the completed current work to Documentation.
+- Expected files read: PROJECT, STATE, and routing guidance.
+- Expected semantic decision: Use Codex as the fallback because the next Responsibility is unmapped; do not treat STATE Executor as a higher-priority PROJECT mapping.
+- Expected mutation: Update STATE only if the new current responsibility must persist for future resumption; do not add a PROJECT preference without Project Owner intent.
+- Expected stop / handoff behavior: Recommend Codex as the fallback and continue or stop according to the user's requested scope.
+
+## 27. Missing Root Governance with Continuity
+
+- Preconditions: `.ai-project/PROJECT.md` and `.ai-project/STATE.md` exist, but root `AGENTS.md` is absent.
+- User intent: Resume the managed project.
+- Expected files read: PROJECT, STATE, `scripts/inspect_project.py` facts, and the Governance issue guidance.
+- Expected semantic decision: Treat continuity as present while explicitly reporting the missing root governance entry; do not hide the gap behind `managed: true`.
+- Expected mutation: None for read-only orientation. Preview the smallest governance repair and require Project Owner approval before writing.
+- Expected stop / handoff behavior: Continue only where applicable governance remains clear; ask for resolution when the gap makes the next action unsafe.

@@ -16,7 +16,7 @@
 - 只需要检查仓库并建立基础治理规则，使用 `sjy-bootstrap-ai-project`。
 - 需要长期维护项目状态、恢复工作进度或在不同工具之间衔接，使用 `sjy-project-assistant`。
 
-两个 Skill 也可以配合使用：先用 `sjy-bootstrap-ai-project` 建立基础规则，再让 `sjy-project-assistant` 接管后续的项目连续性。后者会读取并保留仓库中已有的治理内容。
+这两个 Skill 并不是默认的串联安装步骤。历史项目如果已经使用 `sjy-bootstrap-ai-project`，`sjy-project-assistant` 可以在 Adopt 时兼容并保留已有治理；新项目应根据上面的实际需求选择对应 Skill，避免重复建立治理内容。
 
 ## 安装
 

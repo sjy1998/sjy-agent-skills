@@ -1,6 +1,10 @@
 ---
 name: sjy-project-assistant
 description: Lightweight repository-native AI engineering governance and continuity for initializing, adopting, resuming, routing, and minimally synchronizing AI Coding projects across contexts and tools.
+metadata:
+  author: sjy1998
+  version: "1.0.1"
+  compatibility: Requires Python 3.10 or later.
 ---
 
 # SJY Project Assistant
@@ -48,6 +52,17 @@ Treat these as the main user-facing entry patterns:
 
 Do not classify Greenfield/Brownfield from one filename alone; use repository evidence and user intent.
 
+## Deterministic Helpers
+
+Use bundled helpers for repository mechanics when they apply:
+
+- repository fact inspection → `scripts/inspect_project.py`;
+- AGENTS managed-block insertion or replacement → `assets/AGENTS.managed-block.md` with `scripts/safe_write.py`;
+- PROJECT / STATE starting structure → templates under `assets/`;
+- continuity protocol verification after PROJECT / STATE writes → `scripts/validate_protocol.py`.
+
+The LLM decides semantics. Helpers perform deterministic mechanics. Do not bypass a bundled safety helper with an equivalent direct write when the helper covers that mutation.
+
 ## Resume Fast Path
 
 1. Read applicable project governance.
@@ -63,14 +78,23 @@ Use `references/governance.md` for AGENTS/tool-adapter mutation rules.
 Use `references/superpowers-routing.md` only when engineering-workflow routing is needed.
 Use `references/exceptions.md` when freshness, governance, continuity, capability, or repository-safety issues arise.
 
-## Executor Precedence
+## Executor Routing
+
+For the current Responsibility:
 
 1. explicit current Project Owner instruction;
 2. STATE current Executor;
-3. PROJECT Preferred Executor;
+3. PROJECT Preferred Executor for the current Responsibility;
 4. Skill default recommendation.
 
-Do not modify PROJECT preference for a temporary executor override.
+When routing to a different next Responsibility:
+
+1. explicit current Project Owner instruction;
+2. PROJECT Preferred Executor for the next Responsibility;
+3. current Executor as fallback when the next Responsibility is unmapped;
+4. Skill default recommendation.
+
+STATE Executor describes who is doing the current Responsibility; it does not override the PROJECT mapping for a different next Responsibility. Do not modify PROJECT preference for a temporary executor override.
 
 ## Mutation Boundary
 
