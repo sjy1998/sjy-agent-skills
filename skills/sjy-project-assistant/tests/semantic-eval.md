@@ -1,13 +1,19 @@
-# SJY Project Assistant V1.0.2 Semantic Eval
+# SJY Project Assistant Semantic Eval
 
 Date: 2026-08-09
 
-Skill version: 1.0.2
+Current release: V1.0.3
+
+Behavioral validation baseline: V1.0.2
+
+Baseline commit: `c59b930fbba7bfe0ce9eb092a8eddd0f814035f5`
+
+V1.0.3 introduces no Skill behavior changes from the validated V1.0.2 baseline. It synchronizes completed Claude Code validation evidence and release metadata.
 
 ## Environment
 
 - Codex: current Codex desktop task. The modified `SKILL.md` and progressively disclosed references were used with repository fixtures and live helper output. The packaged `codex.exe` could not be started as a separate process because Windows returned `Access is denied`.
-- Claude Code: PENDING. The `claude` command is not installed in this environment. No simulated Claude runtime was added.
+- Claude Code: validated through fresh child Claude subagent black-box evaluation. Model identifier: `claude-opus-4-ds`. Independent Claude CLI/process: NOT TESTED; the independent `claude` CLI was unavailable in the evaluation environment.
 
 ## Scenario: Greenfield Initialize
 
@@ -197,8 +203,97 @@ Observed:
 Notes:
 - None.
 
+## Claude Code Black-box Evaluation
+
+- Date: 2026-08-09
+- Behavioral baseline: V1.0.2
+- Baseline commit: `c59b930fbba7bfe0ce9eb092a8eddd0f814035f5`
+- Execution mode: Fresh child Claude subagent black-box validation
+- Model identifier: `claude-opus-4-ds`
+- Independent Claude CLI/process: NOT TESTED
+- Source deterministic tests: 45 passed, 4 skipped
+
+Each scenario used a fresh child Claude subagent that received only the minimal scenario prompt. The child subagents had no knowledge of the evaluation prompt, acceptance criteria, or expected answers; they independently read repository evidence and made semantic decisions. This is not described as fully independent Claude CLI/process validation.
+
+### Skill Discovery
+
+Result: PASS
+
+Observed:
+- The Claude Code runtime discovered `sjy-project-assistant` as a project-level Skill.
+- The validated Skill version was 1.0.2.
+- The project-level structure was complete: `SKILL.md`, assets, references, scripts, and tests were present.
+- Independent Claude CLI discovery was not tested.
+
+### Fresh Context Resume
+
+Result: PASS
+
+Observed:
+- Claude recovered context through Governance → PROJECT → STATE → live repository / Git → STATE Relevant.
+- Objective, Responsibility, Executor, and Next were identified without asking the Project Owner to restate project background.
+- The prompt continued into real Implementation work; after material progress, STATE was minimally synchronized so the new resumable reality was durable.
+- Read-only orientation alone does not mutate continuity files. PROJECT and AGENTS remained unchanged because no durable project or governance facts changed.
+
+### Planning → Claude Routing
+
+Result: PASS
+
+Observed:
+- Current Responsibility: Planning.
+- Current STATE Executor: Codex.
+- Next Responsibility: Implementation.
+- PROJECT Preferred Executor: Implementation → Claude.
+- The PROJECT Preferred Executor for the different next Responsibility was evaluated before the current STATE Executor fallback, producing Next Responsibility = Implementation and Preferred Executor = Claude.
+- No files were modified.
+
+### Codex → Claude Resume
+
+Result: PASS
+
+Observed:
+- Claude resumed through Governance → PROJECT → STATE → the existing implementation plan.
+- No Codex chat history was required, and requirements analysis, Architecture, and Planning were not repeated.
+- Claude entered Implementation, completed the implementation, and passed 16 scenario tests.
+- PROJECT's long-term executor preference remained unchanged.
+- After material progress, STATE was synchronized to the following Responsibility so the work remained resumable.
+
+### Temporary Override
+
+Result: PASS
+
+Observed:
+- The Project Owner's explicit instruction took precedence.
+- Claude did not begin Implementation.
+- PROJECT and STATE were not modified unnecessarily.
+- The temporary override was not persisted as a permanent executor preference.
+
+### Small Edit / NO WRITE
+
+Result: PASS
+
+Observed:
+- Only `README.md` was modified to correct the requested spelling error.
+- `AGENTS.md`, `.ai-project/PROJECT.md`, and `.ai-project/STATE.md` were unchanged.
+- The narrow edit did not trigger unnecessary project-governance ceremony.
+
+### Brownfield Adopt
+
+Result: PASS
+
+Observed:
+- Claude followed inspect → understand existing project → Governance / Continuity / Routing gap analysis → minimal adoption proposal → Project Owner confirmation boundary.
+- Before confirmation, no AGENTS, PROJECT, or STATE file was created.
+- No parallel knowledge base was created, and the project was not forced back into Architecture or Planning.
+- No tracked project or governance changes remained; untracked `__pycache__/` was created by test execution.
+
 ## Summary
 
 - Codex: 13 PASS, 0 PARTIAL, 0 FAIL.
-- Claude Code: PENDING because the CLI is unavailable.
-- Overall: PASS for the available required runtime; cross-tool Claude confirmation remains pending under the Specification's allowed fallback.
+- Claude Code: 7 PASS, 0 PARTIAL, 0 FAIL (fresh child Claude subagent black-box evaluation).
+- Independent Claude CLI/process: NOT TESTED.
+- Current release: V1.0.3.
+- Behavioral validation baseline: V1.0.2 at `c59b930fbba7bfe0ce9eb092a8eddd0f814035f5`.
+- V1.0.3 introduces no Skill behavior changes from the validated V1.0.2 baseline.
+- Overall: PASS — Stable V1 validated in Codex and Claude Code within the tested execution modes.
+- V1 Architecture: Frozen.
