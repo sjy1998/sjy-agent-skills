@@ -141,8 +141,8 @@ Each scenario records preconditions, user intent, expected files read, expected 
 
 - Preconditions: Planning is complete, the resulting plan exists, and PROJECT prefers Claude for Implementation.
 - User intent: Prepare the next major responsibility.
-- Expected files read: PROJECT, STATE, the completed planning artifact, and routing guidance.
-- Expected semantic decision: Identify the meaningful boundary from Planning to Implementation and Claude as the preferred executor.
+- Expected files read: PROJECT, STATE, current or generated AGENTS governance, the completed planning artifact, and routing guidance.
+- Expected semantic decision: Apply the AGENTS current/next routing distinction, identify the meaningful boundary from Planning to Implementation, and select Claude from the PROJECT mapping for next-responsibility Implementation before falling back to the current Codex executor.
 - Expected mutation: Sync STATE to reference the plan, set the next Responsibility to Implementation, and make the next action resumable.
 - Expected stop / handoff behavior: Recommend opening the repository in Claude and invoking `sjy-project-assistant`; stop before implementation unless the Project Owner explicitly overrides.
 

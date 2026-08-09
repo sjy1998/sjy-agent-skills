@@ -138,7 +138,8 @@ def validate_state_text(
         ("Next", "STATE_NEXT_EMPTY"),
     ):
         body = _section_body(text, heading)
-        if body == "":
+        heading_exists = _has_line(text, rf"^## {re.escape(heading)}[ \t]*\r?$")
+        if heading_exists and not body:
             diagnostics.append(
                 _diagnostic("ERROR", code, f"STATE.md section '## {heading}' must have a non-empty body.")
             )

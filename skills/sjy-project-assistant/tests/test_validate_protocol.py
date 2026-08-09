@@ -350,6 +350,22 @@ Working.
     assert "STATE_NEXT_EMPTY" in codes(validate_state_text(text))
 
 
+def test_next_heading_at_eof_without_final_newline_is_empty_error():
+    text = """# Current State
+
+Objective: Demo
+Responsibility: Implementation
+Executor: Claude
+
+## Current Work
+
+Working.
+
+## Next"""
+
+    assert "STATE_NEXT_EMPTY" in codes(validate_state_text(text))
+
+
 def test_partial_idle_state_is_error():
     text = """# Current State
 
