@@ -3,7 +3,7 @@ name: sjy-project-assistant
 description: Use when entering a repository in a fresh context, adopting an existing project for AI collaboration, resuming unfinished project work, determining the next major responsibility, or preparing cross-tool continuation.
 metadata:
   author: sjy1998
-  version: "1.0.3"
+  version: "1.1.0"
   compatibility: Requires Python 3.10 or later.
 ---
 
@@ -31,10 +31,13 @@ Treat these as the main user-facing entry patterns:
 
 - Resume first.
 - Inspect before asking.
+- Infer before asking during project entry.
 - Reuse before create.
 - Index; do not duplicate.
 - Preserve existing work.
 - Preferred executor is guidance, not permanent ownership.
+- Executor labels are open; recommend from Project Owner preference, Responsibility, available tools, and actual capability.
+- Prefer a repository-capable executor when the Responsibility requires direct repository work.
 - Project Owner instruction overrides project preferences.
 - Read-only orientation does not mutate project state.
 - Sync only when future continuity requires it.
@@ -51,6 +54,8 @@ Treat these as the main user-facing entry patterns:
 6. Sync only when a durable project fact or resumable-state fact materially changed.
 
 Do not classify Greenfield/Brownfield from one filename alone; use repository evidence and user intent.
+
+For an Empty Greenfield, focus missing high-impact intake on Project, Next, and Tools; ask in one consolidated round by default and ask nothing redundant when those facts are already known. See `references/workflows.md` for Initialize and Adopt inference rules.
 
 ## Deterministic Helpers
 

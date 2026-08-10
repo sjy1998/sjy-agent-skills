@@ -244,3 +244,57 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Expected semantic decision: Treat continuity as present while explicitly reporting the missing root governance entry; do not hide the gap behind `managed: true`.
 - Expected mutation: None for read-only orientation. Preview the smallest governance repair and require Project Owner approval before writing.
 - Expected stop / handoff behavior: Continue only where applicable governance remains clear; ask for resolution when the gap makes the next action unsafe.
+
+## 28. Empty Greenfield — Missing Intake
+
+- Preconditions: The inspected directory is empty, unmanaged, and the Project Owner has not supplied enough information to determine Project, Next, or Tools.
+- User intent: Initialize the project.
+- Expected files read: Inspect the directory and available repository facts before asking; existing requirements, prior projects, reference code, API documentation, and technical constraints are optional evidence rather than required intake.
+- Expected semantic decision: Ask for the missing Project, Next, and Tools information in one consolidated intake round by default. Explain that Next may be Idle and that existing materials are optional. Ask a follow-up only when a remaining high-impact ambiguity would affect correct initialization.
+- Expected mutation: Do not write governance or continuity files before the Project Owner responds, confirms the proposed Responsibility / Executor Map, and sees the exact mutation preview.
+- Expected stop / handoff behavior: Await the consolidated intake response; do not create placeholder requirements, architecture, plan, or roadmap documents.
+
+## 29. Empty Greenfield — Fully Specified
+
+- Preconditions: The inspected directory is empty and unmanaged, and the Project Owner has already supplied the project purpose, initial objective, and available tools.
+- User intent: Initialize the project with the supplied facts.
+- Expected files read: Inspect the directory and use the user request and supplied materials as evidence.
+- Expected semantic decision: Ask zero redundant questions. Infer Name, Purpose, Initial Objective, and Initial Responsibility, then recommend a small practical Responsibility / Executor Map based on the available tools and their actual ability to perform the work.
+- Expected mutation: After Owner confirmation, present an exact preview and create only `AGENTS.md`, `.ai-project/PROJECT.md`, and `.ai-project/STATE.md` using the safe mutation and validation helpers.
+- Expected stop / handoff behavior: Recommend the next action after protocol validation; do not create placeholder planning documents or automatically begin another workflow.
+
+## 30. Empty Greenfield — Idle
+
+- Preconditions: The inspected directory is empty and unmanaged, and the Project Owner explicitly states that there is no current objective.
+- User intent: Initialize governance while leaving active work unset.
+- Expected files read: Inspect the directory and use the supplied Project and Tools information without asking for a fabricated objective.
+- Expected semantic decision: Represent the initial state as `Objective: None`, `Responsibility: Idle`, and `Executor: None`; do not manufacture Planning, Architecture, Implementation, or any other active responsibility.
+- Expected mutation: After confirmation and preview, create only the minimal governance and continuity files with a valid Idle STATE.
+- Expected stop / handoff behavior: Report that the project awaits its first objective.
+
+## 31. Adopt — Infer Current Responsibility
+
+- Preconditions: An unmanaged Brownfield repository contains source, tests, manifests, documentation, and current Git changes that reliably show active Implementation work.
+- User intent: Adopt Project Assistant without interrupting current work.
+- Expected files read: Existing governance, README and relevant documentation, manifests, source, tests, plans when present, and focused live repository/Git evidence.
+- Expected semantic decision: Infer the Current Objective and Current Responsibility from repository evidence. Do not ask the Project Owner to restate the project stage, restart a lifecycle, or return to Requirements, Architecture, or Planning when the evidence already establishes Implementation.
+- Expected mutation: Recommend only the missing, useful governance, continuity, and small practical Responsibility / Executor mapping; write it only after confirmation and preview.
+- Expected stop / handoff behavior: Resume the repository's actual Implementation work after protocol validation.
+
+## 32. Multi-Executor Recommendation
+
+- Preconditions: The Project Owner identifies Codex, Claude Code, OpenCode, and ChatGPT as available tools, and the project has no mature Responsibility / Executor Map.
+- User intent: Receive a practical collaboration recommendation.
+- Expected files read: PROJECT and STATE when present, project evidence that defines the responsibilities, and facts about how the listed tools are currently available and what work they can actually perform.
+- Expected semantic decision: Keep Executor labels open and do not reduce the recommendation to Codex and Claude. Recommend executors from Project Owner preference, Responsibility, available tools, and actual ability without assigning any tool a fixed global role. Keep the map small and practical rather than constructing a complete lifecycle.
+- Expected mutation: Persist the mapping only after Owner confirmation and only as normal PROJECT collaboration preferences; do not add an executor registry, capability database, or tool profile.
+- Expected stop / handoff behavior: Apply the existing routing precedence and continue or route only at a meaningful responsibility boundary.
+
+## 33. Non-Repository Tool Not Preferred for Implementation
+
+- Preconditions: An available tool can advise through a Web / Chat interface but cannot continuously read, modify, run, and test the local repository in its current usage mode; another available executor can perform that repository work.
+- User intent: Choose an executor for direct repository Implementation and related advisory work.
+- Expected files read: Current Responsibility, PROJECT preferences when present, available-environment facts, and evidence of the capabilities required by the work.
+- Expected semantic decision: The advisory tool may be recommended for Research, Requirements discussion, early analysis, document drafting, or technical comparison, but is not preferred for Implementation that requires direct repository reading, local mutation, terminal execution, testing, Git inspection, and continuous execution. Base this judgment on current capability facts rather than a commercial brand.
+- Expected mutation: Use the existing PROJECT and STATE schema only; do not add Executor Type, capability storage, or a special Web / Chat handoff protocol.
+- Expected stop / handoff behavior: Recommend an available repository-capable executor for direct Implementation while preserving Project Owner instruction as the highest-priority routing input.
