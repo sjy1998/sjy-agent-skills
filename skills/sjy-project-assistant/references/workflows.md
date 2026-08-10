@@ -42,7 +42,7 @@ Ask only for missing high-impact information. When an Empty Greenfield requires 
 
 Existing requirements, prior projects, reference code, API documentation, and technical constraints are optional evidence, not required intake. Initialize without them when Project, Next, and Tools are sufficient. Do not require or create placeholder requirements, architecture, project-plan, implementation-plan, or roadmap documents.
 
-After Owner confirmation and preview, the default minimal output remains only root `AGENTS.md`, `.ai-project/PROJECT.md`, and `.ai-project/STATE.md`. Do not add another Project Assistant managed file.
+After Owner confirmation and preview, the default Empty Greenfield output is exactly root `AGENTS.md`, `.ai-project/PROJECT.md`, and `.ai-project/STATE.md`. Tool-specific adapters are conditional integrations, not a default fourth output: availability of Claude Code, Codex, OpenCode, or another tool alone is not sufficient reason to create one. Consider an adapter only when the Project Owner explicitly requests it or repository evidence shows a material integration need; preserve an existing mature adapter and keep any integration thin rather than duplicating AGENTS, PROJECT, or STATE.
 
 ### Adopt
 
