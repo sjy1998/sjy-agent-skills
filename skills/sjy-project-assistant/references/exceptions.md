@@ -35,7 +35,11 @@ If PROJECT is missing, inspect repository evidence, reconstruct a candidate, and
 
 ## 4. Executor / Capability Mismatch
 
-Use executor precedence and the available environment to make a recommendation. A preferred executor is guidance rather than permanent ownership. At a major handoff boundary, make STATE resumable, reference the produced artifacts, recommend the preferred executor, provide the exact resume action, and stop unless the Project Owner asks to continue.
+Use current environment facts rather than assumed brand capabilities to determine whether the preferred Executor is available and can actually perform the Responsibility. Apply the existing executor precedence first; explicit Project Owner instruction always wins. A preferred Executor is guidance rather than permanent ownership.
+
+When the preferred Executor is unavailable or demonstrably incapable of the required work, report the mismatch and recommend an available capable fallback. Prefer repository-capable execution when the Responsibility requires direct repository reading, local mutation, terminal execution, testing, Git inspection, or continuous implementation. A temporary availability or capability mismatch may change the current STATE Executor when persistence is needed, but it does not rewrite the PROJECT long-term preference unless the Project Owner changes that preference.
+
+At a major handoff boundary, make STATE resumable, reference the produced artifacts, recommend the selected executor, provide the exact resume action, and stop unless the Project Owner asks to continue. Do not create a special handoff protocol for advisory or Web / Chat tools.
 
 ## 5. Repository Safety Issue
 
