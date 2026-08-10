@@ -260,7 +260,7 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - User intent: Initialize the project with the supplied facts.
 - Expected files read: Inspect the directory and use the user request and supplied materials as evidence.
 - Expected semantic decision: Ask zero redundant questions. Infer Name, Purpose, Initial Objective, and Initial Responsibility, then recommend a small practical Responsibility / Executor Map only where Project Owner preference or actual capability evidence is sufficient.
-- Expected mutation: After Owner confirmation, present an exact preview and create only `AGENTS.md`, `.ai-project/PROJECT.md`, and `.ai-project/STATE.md` using the safe mutation and validation helpers. Write STATE Relevant entries as direct parseable locators without descriptive prefixes, and include only meaningful locators that already exist after initialization; do not create placeholder artifacts to satisfy validation.
+- Expected mutation: After Owner confirmation, present an exact preview and create exactly `AGENTS.md`, `.ai-project/PROJECT.md`, and `.ai-project/STATE.md` using the safe mutation and validation helpers. Tool-specific adapters are not part of the default Empty Greenfield output; availability of Codex, Claude Code, OpenCode, or another tool alone is not sufficient reason to create one. Write STATE Relevant entries as direct parseable locators without descriptive prefixes, and include only meaningful locators that already exist after initialization; do not create placeholder artifacts to satisfy validation.
 - Expected stop / handoff behavior: Recommend the next action after protocol validation; do not create placeholder planning documents or automatically begin another workflow.
 
 ## 30. Empty Greenfield — Idle
@@ -298,3 +298,12 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Expected semantic decision: The advisory tool may be recommended for Research, Requirements discussion, early analysis, document drafting, or technical comparison, but is not preferred for Implementation that requires direct repository reading, local mutation, terminal execution, testing, Git inspection, and continuous execution. Base this judgment on current capability facts rather than a commercial brand.
 - Expected mutation: Use the existing PROJECT and STATE schema only; do not add Executor Type, capability storage, or a special Web / Chat handoff protocol.
 - Expected stop / handoff behavior: Recommend an available repository-capable executor for direct Implementation while preserving Project Owner instruction as the highest-priority routing input.
+
+## 34. Owner Explicitly Selects an Incapable Executor
+
+- Preconditions: The current Responsibility requires direct repository access, local mutation, terminal execution, and testing. The Project Owner explicitly selects an Executor that cannot perform those operations in its current usage mode, while an available fallback can.
+- User intent: Use the selected incapable Executor for the current Responsibility.
+- Expected files read: Current Responsibility, PROJECT and STATE when present, the Owner instruction, and current environment capability facts.
+- Expected semantic decision: Acknowledge that the Owner instruction has routing priority, then explicitly report the concrete capability mismatch and state that direct execution is infeasible in the selected Executor's current mode. Actively recommend an available capable fallback or a feasible change of execution mode before proceeding; do not continue ordinary implementation intake as if no mismatch exists.
+- Expected mutation: Do not pretend the selected Executor has unavailable capabilities, silently ignore the Owner choice, or rewrite the PROJECT long-term preference for this temporary mismatch.
+- Expected stop / handoff behavior: Await or follow the Project Owner's choice between the capable fallback and feasible execution-mode change.

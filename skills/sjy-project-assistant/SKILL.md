@@ -3,7 +3,7 @@ name: sjy-project-assistant
 description: Use when entering a repository in a fresh context, adopting an existing project for AI collaboration, resuming unfinished project work, determining the next major responsibility, or preparing cross-tool continuation.
 metadata:
   author: sjy1998
-  version: "1.1.1"
+  version: "1.1.2"
   compatibility: Requires Python 3.10 or later.
 ---
 
@@ -39,6 +39,7 @@ Treat these as the main user-facing entry patterns:
 - Executor labels are open; recommend from Project Owner preference, Responsibility, available tools, and actual capability.
 - Prefer a repository-capable executor when the Responsibility requires direct repository work.
 - Project Owner instruction overrides project preferences.
+- Project Owner routing priority does not create capabilities the selected executor lacks.
 - Read-only orientation does not mutate project state.
 - Sync only when future continuity requires it.
 - Git is evidence, not a state machine.

@@ -39,6 +39,8 @@ Use current environment facts rather than assumed brand capabilities to determin
 
 When the preferred Executor is unavailable or demonstrably incapable of the required work, report the mismatch and recommend an available capable fallback. Prefer repository-capable execution when the Responsibility requires direct repository reading, local mutation, terminal execution, testing, Git inspection, or continuous implementation. A temporary availability or capability mismatch may change the current STATE Executor when persistence is needed, but it does not rewrite the PROJECT long-term preference unless the Project Owner changes that preference.
 
+Project Owner routing priority does not create a capability the selected Executor lacks. When the Owner explicitly selects an Executor that cannot perform the Responsibility in its current usage mode, acknowledge the choice, identify the concrete capability mismatch, state that direct execution is infeasible in that mode, and actively recommend either an available capable fallback or a feasible change of execution mode before proceeding. Await or follow the Owner's decision; do not pretend the missing capability exists, silently ignore the choice, continue ordinary implementation intake as if no mismatch exists, or rewrite the PROJECT long-term preference for a temporary mismatch.
+
 At a major handoff boundary, make STATE resumable, reference the produced artifacts, recommend the selected executor, provide the exact resume action, and stop unless the Project Owner asks to continue. Do not create a special handoff protocol for advisory or Web / Chat tools.
 
 ## 5. Repository Safety Issue
