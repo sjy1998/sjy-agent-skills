@@ -1,21 +1,51 @@
 # SJY Project Assistant Semantic Eval
 
+## Current Validation Status
+
+Date: 2026-08-10
+
+Current implementation release: V1.1.2
+
+Validated release: V1.1.2
+
+Current release commit: `57fc9686eb1e2c14f9bd8b4db766c1d7ea3bbe49`
+
+Validation environments:
+- Codex targeted V1.1.2 T1-T4: PASS.
+- Claude Code targeted V1.1.2 T1-T4: PASS via fresh-context child-agent black-box evaluation. Model identifier: `claude-sonnet-4-ds`.
+- Independent Claude CLI/process validation for V1.1.2: NOT TESTED.
+
+Previous stable validation baseline:
+- Behavioral baseline: V1.0.2.
+- Baseline commit: `c59b930fbba7bfe0ce9eb092a8eddd0f814035f5`.
+- V1.0.3 introduced no Skill behavior changes from that baseline; it synchronized validation evidence and release metadata.
+
+Deterministic regression status for V1.1.2:
+- `python -m pytest skills/sjy-project-assistant/tests -q`: 45 passed, 4 skipped.
+- `git diff --check`: PASS.
+
+The V1.1.2 targeted closure validates the two cross-runtime semantic fixes introduced after V1.1.1 and confirms no regression in current/next Responsibility routing. No further V1.1.2 behavioral patch is justified by this validation.
+
+---
+
+## Historical Stable V1 Validation Record
+
 Date: 2026-08-09
 
-Current release: V1.0.3
+Current release at that closure: V1.0.3
 
 Behavioral validation baseline: V1.0.2
 
 Baseline commit: `c59b930fbba7bfe0ce9eb092a8eddd0f814035f5`
 
-V1.0.3 introduces no Skill behavior changes from the validated V1.0.2 baseline. It synchronizes completed Claude Code validation evidence and release metadata.
+V1.0.3 introduced no Skill behavior changes from the validated V1.0.2 baseline. It synchronized completed Claude Code validation evidence and release metadata.
 
-## Environment
+### Environment
 
 - Codex: current Codex desktop task. The modified `SKILL.md` and progressively disclosed references were used with repository fixtures and live helper output. The packaged `codex.exe` could not be started as a separate process because Windows returned `Access is denied`.
 - Claude Code: validated through fresh child Claude subagent black-box evaluation. Model identifier: `claude-opus-4-ds`. Independent Claude CLI/process: NOT TESTED; the independent `claude` CLI was unavailable in the evaluation environment.
 
-## Scenario: Greenfield Initialize
+### Scenario: Greenfield Initialize
 
 Environment: Codex
 Result: PASS
@@ -31,7 +61,7 @@ Observed:
 Notes:
 - None.
 
-## Scenario: Brownfield Adopt
+### Scenario: Brownfield Adopt
 
 Environment: Codex
 Result: PASS
@@ -46,7 +76,7 @@ Observed:
 Notes:
 - None.
 
-## Scenario: Fresh Context Resume
+### Scenario: Fresh Context Resume
 
 Environment: Codex
 Result: PASS
@@ -60,7 +90,7 @@ Observed:
 Notes:
 - None.
 
-## Scenario: Dirty Worktree
+### Scenario: Dirty Worktree
 
 Environment: Codex
 Result: PASS
@@ -74,7 +104,7 @@ Observed:
 Notes:
 - None.
 
-## Scenario: STALE State
+### Scenario: STALE State
 
 Environment: Codex
 Result: PASS
@@ -88,7 +118,7 @@ Observed:
 Notes:
 - None.
 
-## Scenario: CONFLICT State
+### Scenario: CONFLICT State
 
 Environment: Codex
 Result: PASS
@@ -102,7 +132,7 @@ Observed:
 Notes:
 - None.
 
-## Scenario: Small Edit / NO WRITE
+### Scenario: Small Edit / NO WRITE
 
 Environment: Codex
 Result: PASS
@@ -116,7 +146,7 @@ Observed:
 Notes:
 - None.
 
-## Scenario: Temporary Routing Override
+### Scenario: Temporary Routing Override
 
 Environment: Codex
 Result: PASS
@@ -130,7 +160,7 @@ Observed:
 Notes:
 - None.
 
-## Scenario: Planning → Claude Implementation Handoff
+### Scenario: Planning → Claude Implementation Handoff
 
 Environment: Codex
 Result: PASS
@@ -147,7 +177,7 @@ Notes:
 - Regression baseline: FAIL before the V1.0.2 correction because the installable AGENTS block exposed one unified executor priority and could make the current Codex executor appear to outrank the next-responsibility Claude mapping.
 - Corrected managed-block and valid-fixture contract: PASS.
 
-## Scenario: Unmapped Next Responsibility
+### Scenario: Unmapped Next Responsibility
 
 Environment: Codex
 Result: PASS
@@ -161,7 +191,7 @@ Observed:
 Notes:
 - None.
 
-## Scenario: Superpowers Unavailable
+### Scenario: Superpowers Unavailable
 
 Environment: Codex
 Result: PASS
@@ -175,7 +205,7 @@ Observed:
 Notes:
 - None.
 
-## Scenario: Missing STATE
+### Scenario: Missing STATE
 
 Environment: Codex
 Result: PASS
@@ -189,7 +219,7 @@ Observed:
 Notes:
 - None.
 
-## Scenario: Ordinary Project Q&A
+### Scenario: Ordinary Project Q&A
 
 Environment: Codex
 Result: PASS
@@ -203,7 +233,7 @@ Observed:
 Notes:
 - None.
 
-## Claude Code Black-box Evaluation
+### Claude Code Black-box Evaluation
 
 - Date: 2026-08-09
 - Behavioral baseline: V1.0.2
@@ -215,7 +245,7 @@ Notes:
 
 Each scenario used a fresh child Claude subagent that received only the minimal scenario prompt. The child subagents had no knowledge of the evaluation prompt, acceptance criteria, or expected answers; they independently read repository evidence and made semantic decisions. This is not described as fully independent Claude CLI/process validation.
 
-### Skill Discovery
+#### Skill Discovery
 
 Result: PASS
 
@@ -225,7 +255,7 @@ Observed:
 - The project-level structure was complete: `SKILL.md`, assets, references, scripts, and tests were present.
 - Independent Claude CLI discovery was not tested.
 
-### Fresh Context Resume
+#### Fresh Context Resume
 
 Result: PASS
 
@@ -235,7 +265,7 @@ Observed:
 - The prompt continued into real Implementation work; after material progress, STATE was minimally synchronized so the new resumable reality was durable.
 - Read-only orientation alone does not mutate continuity files. PROJECT and AGENTS remained unchanged because no durable project or governance facts changed.
 
-### Planning → Claude Routing
+#### Planning → Claude Routing
 
 Result: PASS
 
@@ -247,7 +277,7 @@ Observed:
 - The PROJECT Preferred Executor for the different next Responsibility was evaluated before the current STATE Executor fallback, producing Next Responsibility = Implementation and Preferred Executor = Claude.
 - No files were modified.
 
-### Codex → Claude Resume
+#### Codex → Claude Resume
 
 Result: PASS
 
@@ -258,7 +288,7 @@ Observed:
 - PROJECT's long-term executor preference remained unchanged.
 - After material progress, STATE was synchronized to the following Responsibility so the work remained resumable.
 
-### Temporary Override
+#### Temporary Override
 
 Result: PASS
 
@@ -268,7 +298,7 @@ Observed:
 - PROJECT and STATE were not modified unnecessarily.
 - The temporary override was not persisted as a permanent executor preference.
 
-### Small Edit / NO WRITE
+#### Small Edit / NO WRITE
 
 Result: PASS
 
@@ -277,7 +307,7 @@ Observed:
 - `AGENTS.md`, `.ai-project/PROJECT.md`, and `.ai-project/STATE.md` were unchanged.
 - The narrow edit did not trigger unnecessary project-governance ceremony.
 
-### Brownfield Adopt
+#### Brownfield Adopt
 
 Result: PASS
 
@@ -287,13 +317,114 @@ Observed:
 - No parallel knowledge base was created, and the project was not forced back into Architecture or Planning.
 - No tracked project or governance changes remained; untracked `__pycache__/` was created by test execution.
 
-## Summary
+### Stable V1 Summary
 
 - Codex: 13 PASS, 0 PARTIAL, 0 FAIL.
 - Claude Code: 7 PASS, 0 PARTIAL, 0 FAIL (fresh child Claude subagent black-box evaluation).
 - Independent Claude CLI/process: NOT TESTED.
-- Current release: V1.0.3.
+- Release at closure: V1.0.3.
 - Behavioral validation baseline: V1.0.2 at `c59b930fbba7bfe0ce9eb092a8eddd0f814035f5`.
-- V1.0.3 introduces no Skill behavior changes from the validated V1.0.2 baseline.
+- V1.0.3 introduced no Skill behavior changes from the validated V1.0.2 baseline.
 - Overall: PASS — Stable V1 validated in Codex and Claude Code within the tested execution modes.
 - V1 Architecture: Frozen.
+
+---
+
+## V1.1.2 Targeted Validation Closure
+
+### Scope
+
+V1.1.2 closes two cross-runtime ambiguities found after V1.1.1:
+1. Owner routing priority must not be treated as if it creates capabilities the selected Executor lacks.
+2. Fully specified Empty Greenfield initialization must not create a tool-specific adapter merely because that tool is available.
+
+The targeted regression set also rechecks next-Responsibility routing and temporary Owner override semantics.
+
+### Codex Targeted Validation
+
+Result: PASS
+
+Tests:
+- T1 — Owner vs Incapable Executor: PASS.
+- T2 — Empty Greenfield Fully Specified: PASS.
+- T3 — Planning → Different Next Responsibility: PASS.
+- T4 — Temporary Override: PASS.
+
+Evidence source: PR #10 validation record for V1.1.2.
+
+### Claude Code Targeted Black-box Validation
+
+- Date: 2026-08-10
+- Tested release: V1.1.2
+- Tested commit: `57fc9686eb1e2c14f9bd8b4db766c1d7ea3bbe49`
+- Execution mode: four fresh-context Claude Code child agents used as black-box runtimes
+- Model identifier: `claude-sonnet-4-ds`
+- Formal repository mutation: none
+- Fixture location: temporary directories outside the repository
+
+#### T1 — Owner vs Incapable Executor
+
+Result: PASS
+
+Observed:
+- The explicit Owner routing choice was acknowledged and remained authoritative.
+- The runtime identified the concrete repository-capability mismatch rather than pretending the selected Web Chat executor could execute repository work.
+- It explicitly stated direct execution was infeasible in the current mode.
+- It actively recommended both a capable fallback and a feasible execution-mode change.
+- PROJECT long-term preference was not rewritten for a temporary mismatch.
+- No files were modified while awaiting the Owner decision.
+
+#### T2 — Empty Greenfield Fully Specified
+
+Result: PASS
+
+Observed:
+- The empty directory was inspected first and correctly classified as unmanaged Empty Greenfield.
+- Project / Next / Tools were already supplied, so no redundant intake was requested.
+- The default preview contained exactly:
+  - `AGENTS.md`
+  - `.ai-project/PROJECT.md`
+  - `.ai-project/STATE.md`
+- `CLAUDE.md`, `CODEX.md`, requirements, architecture, roadmap, and implementation-plan placeholders were not added.
+- Claude Code availability by itself did not trigger a tool-specific adapter.
+- No initialization write occurred before Owner confirmation.
+
+#### T3 — Planning → Different Next Responsibility
+
+Result: PASS
+
+Observed:
+- Planning completion was established from Owner instruction, STATE, and the produced planning artifact.
+- Next Responsibility resolved to Implementation.
+- PROJECT's Implementation → Claude Code mapping was selected before the previous STATE Executor fallback.
+- The previous Planning Executor (Codex) did not override the mapping for the different next Responsibility.
+- The proposed handoff preserved resumability and referenced the produced planning artifact.
+- No implementation began automatically at the Responsibility boundary.
+
+#### T4 — Temporary Override
+
+Result: PASS
+
+Observed:
+- The explicit Owner instruction to use Codex for the current Implementation took precedence.
+- The temporary current Executor override did not rewrite PROJECT's long-term Implementation → Claude Code preference.
+- STATE Executor was identified as the only continuity field that might need minimal Sync if the temporary execution must persist across a fresh context.
+- The project was not forced back to Claude Code merely because PROJECT retained the long-term preference.
+
+### Supporting Regression
+
+- `python -m pytest skills/sjy-project-assistant/tests -q`: 45 passed, 4 skipped.
+- `git diff --check`: PASS.
+- Formal repository mutation during Claude targeted validation: none.
+
+### Final Judgment
+
+- Architecture regression: none.
+- Routing regression: none.
+- Greenfield regression: none.
+- Cross-runtime consistency: PASS.
+- Codex V1.1.2 targeted validation: PASS.
+- Claude Code V1.1.2 targeted validation: PASS.
+- Overall: PASS.
+
+V1.1.2 is the current validated implementation release. No further V1.1.2 behavioral patch is justified by this validation. V1.1.x is ready to freeze after this validation-closure documentation is merged.
