@@ -250,7 +250,7 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Preconditions: The inspected directory is empty, unmanaged, and the Project Owner has not supplied enough information to determine Project, Next, or Tools.
 - User intent: Initialize the project.
 - Expected files read: Inspect the directory and available repository facts before asking; existing requirements, prior projects, reference code, API documentation, and technical constraints are optional evidence rather than required intake.
-- Expected semantic decision: Ask for the missing Project, Next, and Tools information in one consolidated intake round by default. Explain that Next may be Idle and that existing materials are optional. Ask a follow-up only when a remaining high-impact ambiguity would affect correct initialization.
+- Expected semantic decision: Ask for the missing Project, Next, and Tools information in one consolidated intake round by default. Explain that Next may be Idle. In the same response, briefly state that existing requirements, reference projects, prior code, or other materials may be supplied as optional evidence and are not required for Initialize. Ask a follow-up only when a remaining high-impact ambiguity would affect correct initialization.
 - Expected mutation: Do not write governance or continuity files before the Project Owner responds, confirms the proposed Responsibility / Executor Map, and sees the exact mutation preview.
 - Expected stop / handoff behavior: Await the consolidated intake response; do not create placeholder requirements, architecture, plan, or roadmap documents.
 
@@ -259,8 +259,8 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Preconditions: The inspected directory is empty and unmanaged, and the Project Owner has already supplied the project purpose, initial objective, and available tools.
 - User intent: Initialize the project with the supplied facts.
 - Expected files read: Inspect the directory and use the user request and supplied materials as evidence.
-- Expected semantic decision: Ask zero redundant questions. Infer Name, Purpose, Initial Objective, and Initial Responsibility, then recommend a small practical Responsibility / Executor Map based on the available tools and their actual ability to perform the work.
-- Expected mutation: After Owner confirmation, present an exact preview and create only `AGENTS.md`, `.ai-project/PROJECT.md`, and `.ai-project/STATE.md` using the safe mutation and validation helpers.
+- Expected semantic decision: Ask zero redundant questions. Infer Name, Purpose, Initial Objective, and Initial Responsibility, then recommend a small practical Responsibility / Executor Map only where Project Owner preference or actual capability evidence is sufficient.
+- Expected mutation: After Owner confirmation, present an exact preview and create only `AGENTS.md`, `.ai-project/PROJECT.md`, and `.ai-project/STATE.md` using the safe mutation and validation helpers. Write STATE Relevant entries as direct parseable locators without descriptive prefixes, and include only meaningful locators that already exist after initialization; do not create placeholder artifacts to satisfy validation.
 - Expected stop / handoff behavior: Recommend the next action after protocol validation; do not create placeholder planning documents or automatically begin another workflow.
 
 ## 30. Empty Greenfield — Idle
@@ -268,7 +268,7 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Preconditions: The inspected directory is empty and unmanaged, and the Project Owner explicitly states that there is no current objective.
 - User intent: Initialize governance while leaving active work unset.
 - Expected files read: Inspect the directory and use the supplied Project and Tools information without asking for a fabricated objective.
-- Expected semantic decision: Represent the initial state as `Objective: None`, `Responsibility: Idle`, and `Executor: None`; do not manufacture Planning, Architecture, Implementation, or any other active responsibility.
+- Expected semantic decision: Represent the initial state as `Objective: None`, `Responsibility: Idle`, and `Executor: None`; do not manufacture Planning, Architecture, Implementation, or any other active responsibility. When Project Owner preference or capability evidence is insufficient, leave uncertain Responsibilities unmapped instead of inventing brand-specific Executor preferences or filling a map for completeness.
 - Expected mutation: After confirmation and preview, create only the minimal governance and continuity files with a valid Idle STATE.
 - Expected stop / handoff behavior: Report that the project awaits its first objective.
 

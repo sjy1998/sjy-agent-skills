@@ -39,6 +39,8 @@ For Idle state, `Relevant` may be absent.
 
 For active work, Objective, Responsibility, and Executor must be non-empty, and `## Current Work` and `## Next` must contain non-empty bodies. Missing `## Relevant` remains a warning.
 
+In `STATE ## Relevant`, write repository locators as direct, parseable entries such as `- docs/implementation-plan.md`. Do not mix a descriptive prefix into the same locator entry, such as `- Implementation plan: docs/implementation-plan.md`. Include only meaningful locators that exist in the current repository reality; omit an unavailable future artifact rather than creating a placeholder file to silence validation.
+
 A valid Idle state uses the complete combination `Objective: None`, `Responsibility: Idle`, and `Executor: None`. A partial or contradictory Idle combination is invalid.
 
 Do not use STATE as a task database, roadmap, changelog, handoff history, checkpoint history, or Git log.
@@ -49,7 +51,7 @@ Responsibility describes the kind of active work. It is an open, project-defined
 
 Executor describes who or what performs a Responsibility. It is an open, project-defined label and is not limited to any fixed set of tools. PROJECT Preferred Executor is a long-term project preference. STATE Executor is the current actual executor.
 
-When recommending a Preferred Executor, consider only the Project Owner's preference, the Responsibility, available tools, and whether a candidate in its current usage mode can actually perform the required work. For work requiring direct repository access, local file mutation, terminal execution, testing, Git inspection, or continuous implementation, prefer an available executor with those capabilities. Do not infer permanent brand-specific roles or persist an executor registry, capability database, or tool profile.
+When recommending a Preferred Executor, consider only the Project Owner's preference, the Responsibility, available tools, and whether a candidate in its current usage mode can actually perform the required work. Recommend a mapping only where preference or capability evidence is sufficient; leave uncertain Responsibilities unmapped rather than assigning brand-specific roles to complete the map or use every available tool. For work requiring direct repository access, local file mutation, terminal execution, testing, Git inspection, or continuous implementation, prefer an available executor with those capabilities. Do not infer permanent brand-specific roles or persist an executor registry, capability database, or tool profile.
 
 Current Responsibility executor precedence:
 1. explicit Project Owner instruction;
