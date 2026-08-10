@@ -1,169 +1,92 @@
 # sjy-agent-skills
 
-这是 SJY 维护的个人 Agent Skills 仓库，面向 Codex、Claude Code 等 AI Coding 工具。
+SJY 维护的个人 Agent Skills 仓库，用于沉淀和分发可复用的 AI Agent 能力，主要面向 Codex、Claude Code 等支持 Agent Skills 的工具。
 
-当前仓库只保留一个核心 Skill：[`sjy-project-assistant`](skills/sjy-project-assistant/)。它用于建立或恢复仓库原生的 AI 工程治理与项目连续性，让项目在新的对话上下文、不同 AI 工具或不同执行者之间仍然能够可靠继续。
+仓库中的 Skills 均位于 [`skills/`](skills/) 目录，可按需独立安装和使用。
 
-## 当前状态
+## Skills
 
-| 项目 | 状态 |
-| --- | --- |
-| 当前 Skill | `sjy-project-assistant` |
-| 当前发布版本 | **V1.1.3** |
-| 稳定性 | **Stable / V1.1.x Frozen** |
-| 已验证行为基线 | V1.1.2 implementation |
-| Codex targeted validation | **PASS** |
-| Claude Code targeted validation | **PASS** |
-| Deterministic tests | **45 passed, 4 skipped** |
+| Skill | 简介 | 用途 |
+| --- | --- | --- |
+| [`sjy-project-assistant`](skills/sjy-project-assistant/) | AI Coding 项目治理与连续性助手 | 用于新项目初始化、已有项目接管、项目恢复，以及跨上下文或跨工具继续协作 |
 
-V1.1.3 是一次 **validation-closure release**：它记录了 V1.1.2 在 Codex 与 Claude Code 下完成的跨 Runtime targeted validation，本身不引入新的 Skill 行为。
-
-详细验证记录见 [`tests/semantic-eval.md`](skills/sjy-project-assistant/tests/semantic-eval.md)。
-
-## `sjy-project-assistant`
-
-`sjy-project-assistant` 的定位是：
-
-> Repository-native AI Engineering Governance & Continuity Skill
-
-它主要负责：
-
-- 初始化新的 Greenfield 项目；
-- 接管已有 Brownfield 项目；
-- 在新上下文中恢复项目状态；
-- 判断当前 / 下一 major Responsibility；
-- 根据 Project Owner、项目长期偏好与实际能力进行 Executor Routing；
-- 在真正需要时执行最小 Sync，保持跨上下文、跨工具连续性。
-
-用户侧只需要理解三个主要入口：
-
-```text
-Initialize
-Adopt
-Resume / Continue
-```
-
-`Guide / Route` 与 `Sync` 属于 Skill 内部动作，不需要用户单独调用。
-
-## 核心设计
-
-一个最小托管项目只需要：
-
-```text
-project/
-├── AGENTS.md
-└── .ai-project/
-    ├── PROJECT.md
-    └── STATE.md
-```
-
-三者职责保持清晰分离：
-
-- `AGENTS.md`：项目级 AI 工程治理规则；
-- `.ai-project/PROJECT.md`：稳定、长期有效的 Project Context Map；
-- `.ai-project/STATE.md`：当前最新、可恢复的工作状态。
-
-核心原则：
-
-```text
-Repository = durable project truth
-Chat = temporary working memory
-PROJECT = stable project context
-STATE = resumable current state
-LLM = semantics
-Scripts = mechanics
-```
-
-Skill 不维护第二套 task DB、roadmap DB、handoff DB、executor registry 或 lifecycle state machine，也不会默认自动 commit、push、创建 PR、merge、reset 或改写 Git 历史。
-
-## 运行要求
-
-- Python **3.10+**
-- 一个能够发现并加载 Agent Skills 的 AI Coding 工具
-- Git 不是硬依赖，但在 Git 仓库中可以提供更完整的项目事实
-
-Superpowers 可作为可选工程方法论 Skill 使用，但不是 `sjy-project-assistant` 的运行时硬依赖。
+后续新增 Skills 将继续维护在 `skills/` 目录中。
 
 ## 安装
 
-推荐使用第三方 [`npx skills`](https://github.com/vercel-labs/skills) CLI。Windows 环境建议保留 `--copy`，避免符号链接权限或 Developer Mode 带来的问题。
+推荐使用 [`npx skills`](https://github.com/vercel-labs/skills) 安装。
 
-### 安装到 Codex
-
-```powershell
-npx skills add https://github.com/sjy1998/sjy-agent-skills `
-  --skill sjy-project-assistant `
-  -g `
-  -a codex `
-  --copy
-```
-
-### 安装到 Claude Code
+### 快速安装
 
 ```powershell
-npx skills add https://github.com/sjy1998/sjy-agent-skills `
-  --skill sjy-project-assistant `
-  -g `
-  -a claude-code `
-  --copy
+npx skills add sjy1998/sjy-agent-skills -g
 ```
 
-`npx skills` 是第三方工具，不同版本对全局 Skill 目录的映射可能变化。判断安装是否成功时，应以当前 Agent 是否能够发现并加载 `sjy-project-assistant` 为准；必要时重启应用或新建任务。
+执行后选择需要安装的 Skill 和目标 Agent。
+
+安装指定 Skill：
+
+```powershell
+npx skills add sjy1998/sjy-agent-skills `
+  --skill <skill-name> `
+  -g
+```
+
+Windows 环境如遇符号链接或权限问题，可在命令末尾增加 `--copy`。
 
 ### 手动安装
 
-无法使用 CLI 时，也可以把整个 `skills/sjy-project-assistant/` 目录复制到目标 Agent 当前支持的个人级或项目级 Skills 目录中。
+也可以 Clone 或下载本仓库，将需要的 `skills/<skill-name>/` 整个目录复制到目标 Agent 支持的 Skills 目录中。
 
-常见项目级位置：
+具体安装路径以对应 Agent 的 Skills 文档为准。
 
-```text
-Codex:       <repo>/.agents/skills/sjy-project-assistant/
-Claude Code: <repo>/.claude/skills/sjy-project-assistant/
-```
+## 如何使用 Skills
 
-## 验证与测试
+安装后，Agent 会根据任务和 Skill 描述决定是否加载相应 Skill。
 
-在仓库根目录运行 deterministic tests：
-
-```powershell
-python -m pytest .\skills\sjy-project-assistant\tests -q
-```
-
-当前验证状态：
+通常只需要直接描述任务；如需明确指定，也可以在提示词中写：
 
 ```text
-Codex targeted T1-T4:       PASS
-Claude Code targeted T1-T4: PASS
-Deterministic tests:        45 passed, 4 skipped
+请使用 <skill-name> 完成这个任务。
 ```
 
-跨 Runtime 验证重点覆盖：
+具体 Skill 的能力与规则，以对应 Skill 目录中的 `SKILL.md` 为准。
 
-- Owner 指定当前能力不足的 Executor 时的正确处理；
-- Empty Greenfield 默认严格三文件初始化；
-- Planning → Different Next Responsibility 的路由优先级；
-- Temporary Override 不污染 PROJECT 长期 Executor preference。
+## 支持的 Agent
 
-完整证据与历史验证记录见：
+当前主要维护和验证：
 
-```text
-skills/sjy-project-assistant/tests/semantic-eval.md
-```
+- Codex
+- Claude Code
+
+其他兼容 Agent Skills 的工具也可尝试使用，实际兼容性以对应工具的实现为准。
 
 ## 目录结构
 
 ```text
-skills/
-└── sjy-project-assistant/
-    ├── SKILL.md
-    ├── assets/
-    ├── references/
-    ├── scripts/
-    └── tests/
+sjy-agent-skills/
+├── skills/
+│   ├── sjy-project-assistant/
+│   │   ├── SKILL.md
+│   │   └── ...
+│   └── ...
+├── README.md
+└── LICENSE
 ```
 
-`SKILL.md` 保持核心运行规则，详细协议与工作流通过 `references/` 按需展开；确定性的仓库检查、写入与验证 mechanics 放在 `scripts/` 中。
+其中：
 
-## License
+- 根目录 `README.md`：仓库级说明、Skills 列表与安装入口；
+- `skills/<skill-name>/SKILL.md`：对应 Skill 的定义、适用场景与执行规则；
+- `references/`、`scripts/`、`assets/` 等目录按 Skill 自身需要提供。
+
+## Links
+
+- [Agent Skills](https://agentskills.io/)
+- [`npx skills`](https://github.com/vercel-labs/skills)
+- [OpenAI Skills](https://github.com/openai/skills)
+- [Anthropic Skills](https://github.com/anthropics/skills)
+
+## 许可证
 
 本仓库采用 [Apache License 2.0](LICENSE)。
