@@ -9,6 +9,24 @@ import re
 from typing import Sequence
 
 
+PROJECT_FIELD_PLACEHOLDERS = {
+    "Name": ("<project name>",),
+    "Purpose": ("<one concise purpose>",),
+}
+
+STATE_FIELD_PLACEHOLDERS = {
+    "Objective": ("<current objective>",),
+    "Responsibility": ("<current responsibility>",),
+    "Executor": ("<current executor>",),
+}
+
+STATE_SECTION_PLACEHOLDERS = {
+    "Current Work": ("<short current-work description>",),
+    "Relevant": ("<most important locator>",),
+    "Next": ("<one primary next action>",),
+}
+
+
 @dataclasses.dataclass(frozen=True)
 class Diagnostic:
     level: str
@@ -38,6 +56,11 @@ def _section_body(text: str, heading: str) -> str | None:
     return section.group(1).strip() if section else None
 
 
+def _contains_template_placeholder(value: str, placeholders: Sequence[str]) -> bool:
+    normalized = value.casefold()
+    return any(placeholder.casefold() in normalized for placeholder in placeholders)
+
+
 def validate_project_text(text: str) -> list[Diagnostic]:
     """Validate the required, deliberately lightweight PROJECT.md structure."""
     checks = (
@@ -53,13 +76,22 @@ def validate_project_text(text: str) -> list[Diagnostic]:
         for pattern, code, message in checks
         if not _has_line(text, pattern)
     ]
-    for field, code in (
-        ("Name", "PROJECT_NAME_MISSING"),
-        ("Purpose", "PROJECT_PURPOSE_MISSING"),
+    for field, missing_code, placeholder_code in (
+        ("Name", "PROJECT_NAME_MISSING", "PROJECT_NAME_PLACEHOLDER"),
+        ("Purpose", "PROJECT_PURPOSE_MISSING", "PROJECT_PURPOSE_PLACEHOLDER"),
     ):
-        if not (_field_value(text, field) or "").strip():
+        value = (_field_value(text, field) or "").strip()
+        if not value:
             diagnostics.append(
-                _diagnostic("ERROR", code, f"PROJECT.md is missing a non-empty {field} field.")
+                _diagnostic("ERROR", missing_code, f"PROJECT.md is missing a non-empty {field} field.")
+            )
+        elif _contains_template_placeholder(value, PROJECT_FIELD_PLACEHOLDERS[field]):
+            diagnostics.append(
+                _diagnostic(
+                    "ERROR",
+                    placeholder_code,
+                    f"PROJECT.md {field} still contains a Project Assistant template placeholder.",
+                )
             )
     if not _has_line(text, r"^## Key References\s*$"):
         diagnostics.append(
@@ -132,6 +164,14 @@ def validate_state_text(
             diagnostics.append(
                 _diagnostic("ERROR", code, f"STATE.md is missing a non-empty {field} field.")
             )
+        elif _contains_template_placeholder(value or "", STATE_FIELD_PLACEHOLDERS[field]):
+            diagnostics.append(
+                _diagnostic(
+                    "ERROR",
+                    f"STATE_{field.upper()}_PLACEHOLDER",
+                    f"STATE.md {field} still contains a Project Assistant template placeholder.",
+                )
+            )
 
     for heading, code in (
         ("Current Work", "STATE_CURRENT_WORK_EMPTY"),
@@ -142,6 +182,14 @@ def validate_state_text(
         if heading_exists and not body:
             diagnostics.append(
                 _diagnostic("ERROR", code, f"STATE.md section '## {heading}' must have a non-empty body.")
+            )
+        elif body and _contains_template_placeholder(body, STATE_SECTION_PLACEHOLDERS[heading]):
+            diagnostics.append(
+                _diagnostic(
+                    "ERROR",
+                    f"STATE_{heading.upper().replace(' ', '_')}_PLACEHOLDER",
+                    f"STATE.md section '## {heading}' still contains a Project Assistant template placeholder.",
+                )
             )
 
     normalized_idle = (
@@ -159,6 +207,18 @@ def validate_state_text(
             )
         )
     has_relevant = _has_line(text, r"^## Relevant\s*$")
+    relevant_body = _section_body(text, "Relevant")
+    if relevant_body and _contains_template_placeholder(
+        relevant_body,
+        STATE_SECTION_PLACEHOLDERS["Relevant"],
+    ):
+        diagnostics.append(
+            _diagnostic(
+                "ERROR",
+                "STATE_RELEVANT_PLACEHOLDER",
+                "STATE.md section '## Relevant' still contains a Project Assistant template placeholder.",
+            )
+        )
     if not is_idle and not has_relevant:
         diagnostics.append(
             _diagnostic(

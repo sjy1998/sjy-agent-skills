@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -110,17 +111,78 @@ def test_v12_has_no_portable_prompt_product_surface():
         assert forbidden not in product_text
 
 
-def test_v121_skill_frontmatter_and_description_cover_continuation_scope():
+def test_v122_skill_frontmatter_is_codex_compatible_and_records_runtime_requirement():
     text = read("SKILL.md")
 
-    assert "description: Use for Initialize, Adopt, or Resume/Continue" in text
-    assert "cross-tool" in text
-    assert "cross-agent" in text
-    assert "agent-environment continuation" in text
-    assert 'version: "1.2.1"' in text
-    assert "compatibility: Requires Python 3.10 or later." in text
-    assert "\n  compatibility:" not in text
-    assert "metadata:\n  author: sjy1998\n  version: \"1.2.1\"" in text
+    frontmatter = text.split("---", 2)[1]
+    assert "\ncompatibility:" not in frontmatter
+    assert "metadata:\n  author: sjy1998\n  version: \"1.2.2\"" in frontmatter
+    assert "  compatibility: Requires Python 3.10 or later." in frontmatter
+    assert "Python 3.10 or later" in text.split("---", 2)[2]
+
+
+def test_v122_description_covers_recovery_without_matching_ordinary_small_tasks():
+    text = read("SKILL.md")
+    description = next(
+        line.removeprefix("description: ")
+        for line in text.splitlines()
+        if line.startswith("description: ")
+    )
+
+    for phrase in (
+        "Initialize",
+        "Adopt",
+        "fresh context",
+        "project context",
+        "project status",
+        "where we left off",
+        "Codex",
+        "Claude Code",
+        "next major Responsibility",
+    ):
+        assert phrase in description
+    assert "ordinary scoped coding" in description
+
+
+def test_project_template_keeps_guidance_out_of_collaboration_data():
+    text = read("assets/PROJECT.template.md")
+
+    assert "<!-- Record only useful durable collaboration preferences and constraints;" in text
+    assert not any(
+        line.startswith("- Record only useful durable collaboration preferences")
+        for line in text.splitlines()
+    )
+    assert "- <durable collaboration preference or constraint>" in text
+
+
+def test_trigger_eval_has_balanced_extensible_coverage():
+    eval_data = json.loads(read("tests/trigger-eval.json"))
+    cases = eval_data["cases"]
+    should_trigger = [case for case in cases if case["should_trigger"]]
+    should_not_trigger = [case for case in cases if not case["should_trigger"]]
+
+    assert eval_data["schema_version"] == 1
+    assert eval_data["skill"] == "sjy-project-assistant"
+    assert len(should_trigger) >= 10
+    assert len(should_not_trigger) >= 10
+    assert len({case["id"] for case in cases}) == len(cases)
+    assert all(case["prompt"].strip() and case["rationale"].strip() for case in cases)
+    assert {
+        "greenfield-initialize",
+        "brownfield-adopt",
+        "fresh-context-resume",
+        "project-status-recovery",
+        "cross-tool-continuation",
+        "next-responsibility-routing",
+    }.issubset({case["category"] for case in should_trigger})
+    assert {
+        "code-explanation",
+        "scoped-bugfix",
+        "rename",
+        "readme-edit",
+        "pr-review",
+        "technical-question",
+    }.issubset({case["category"] for case in should_not_trigger})
 
 
 def test_v121_superpowers_routing_removes_forced_handoff_semantics():

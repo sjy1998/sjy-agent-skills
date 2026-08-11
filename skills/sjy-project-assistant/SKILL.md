@@ -1,10 +1,10 @@
 ---
 name: sjy-project-assistant
-description: Use for Initialize, Adopt, or Resume/Continue when entering a repository or continuing work across tools, agents, and agent environments, including cross-tool, cross-agent, and agent-environment continuation, or when determining the next major Responsibility.
-compatibility: Requires Python 3.10 or later.
+description: Use when a repository needs Initialize or Adopt for AI collaboration; when recovering project context or project status in a fresh context, finding where we left off, or resuming/continuing previous work; when continuing across Codex, Claude Code, tools, agents, or environments (cross-tool, cross-agent, or agent-environment continuation); or when determining the next major Responsibility. Do not use for ordinary scoped coding, small edits, standalone PR review, or technical Q&A that does not require project recovery or routing.
 metadata:
   author: sjy1998
-  version: "1.2.1"
+  version: "1.2.2"
+  compatibility: Requires Python 3.10 or later.
 ---
 
 # SJY Project Assistant
@@ -58,6 +58,8 @@ Do not classify Greenfield/Brownfield from one filename alone; use repository ev
 For an Empty Greenfield, focus missing high-impact intake on Project, Next, and Tools; ask in one consolidated round by default and ask nothing redundant when those facts are already known. See `references/workflows.md` for Initialize and Adopt inference rules.
 
 ## Deterministic Helpers
+
+Bundled Python helpers require Python 3.10 or later.
 
 Use bundled helpers for repository mechanics when they apply:
 
