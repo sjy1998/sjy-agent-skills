@@ -542,3 +542,29 @@ Observed:
 - Portable Prompt / prompt-export capability: intentionally excluded from V1.2.0.
 
 Overall: PASS — V1.2.0 is validated for release within the tested Codex and Claude Code execution modes.
+
+---
+
+## V1.2.1 Consistency Patch Validation
+
+### Scope
+
+V1.2.1 is a documentation and contract-test consistency patch. It keeps Project Protocol V1 and the Initialize / Adopt / Resume user-facing workflows unchanged while aligning the V1.2 routing language:
+
+- PROJECT records durable collaboration preferences and constraints, not assignment or lock.
+- Routing uses the applicable PROJECT collaboration preference and does not assume a complete new Responsibility / Preferred Executor table; legacy tables remain compatible.
+- A relevant preference surfaces once at a natural major Responsibility transition. If the Owner explicitly says "continue here" and the current environment is capable, execution continues there without repeating the preference before that Responsibility completes or changes.
+- Capability mismatch remains mandatory to report.
+- No Portable Prompt, Export, Handoff workflow, Project Protocol upgrade, or unrelated implementation was added.
+
+### Deterministic Regression
+
+- Contract tests include `references/superpowers-routing.md`, V1.2.1 frontmatter/description, sparse-preference terminology, and forbidden forced handoff wording.
+- Full package tests: 59 passed, 4 skipped.
+- Protocol validation: PASS for managed-active and managed-idle fixtures.
+- Python helper compilation: PASS.
+- `git diff --check`: PASS.
+
+### Superpowers-Enabled Semantic Validation
+
+The enabled Superpowers execution context was checked against the natural Responsibility transition scenario: the applicable preference surfaced once, explicit "continue here" in a capable current environment continued execution, the preference was not repeated before Responsibility completion/change, capability mismatch remained reportable, and the former forced recommend-preferred-executor / exact-resume-action / stop sequence was absent.

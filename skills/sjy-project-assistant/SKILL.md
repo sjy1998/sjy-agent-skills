@@ -1,10 +1,10 @@
 ---
 name: sjy-project-assistant
-description: Use when entering a repository in a fresh context, adopting an existing project for AI collaboration, resuming unfinished project work, or determining the next major responsibility.
+description: Use for Initialize, Adopt, or Resume/Continue when entering a repository or continuing work across tools, agents, and agent environments, including cross-tool, cross-agent, and agent-environment continuation, or when determining the next major Responsibility.
+compatibility: Requires Python 3.10 or later.
 metadata:
   author: sjy1998
-  version: "1.2.0"
-  compatibility: Requires Python 3.10 or later.
+  version: "1.2.1"
 ---
 
 # SJY Project Assistant
@@ -89,20 +89,20 @@ For the current Responsibility:
 
 1. explicit current Project Owner instruction;
 2. STATE current Executor;
-3. PROJECT Preferred Executor for the current Responsibility;
+3. applicable PROJECT collaboration preference for the current Responsibility;
 4. Skill default recommendation.
 
 When routing to a different next Responsibility:
 
 1. explicit current Project Owner instruction;
-2. PROJECT Preferred Executor for the next Responsibility;
+2. applicable PROJECT collaboration preference for the next Responsibility;
 3. current Executor as fallback when the next Responsibility is unmapped;
 4. Skill default recommendation.
 
 A request for the current Agent/environment to perform or continue a Responsibility counts as explicit Project Owner instruction; a request to advise about another Executor does not.
 
-STATE Executor describes who is doing the current Responsibility; it is not a lock and does not override the PROJECT preference for a different next Responsibility. Do not modify PROJECT preference for a temporary executor override.
-After the Owner explicitly chooses the current capable Agent/environment for a Responsibility, do not mention that Responsibility’s PROJECT Executor preference again until the Responsibility completes or changes, unless a capability mismatch arises or the Owner asks about the preference.
+STATE Executor describes who is doing the current Responsibility; it is not a lock and does not override the applicable PROJECT collaboration preference for a different next Responsibility. Do not modify PROJECT preference for a temporary executor override.
+After the Owner explicitly chooses the current capable Agent/environment for a Responsibility, do not mention that Responsibility’s applicable PROJECT collaboration preference again until that Responsibility completes or changes, unless a capability mismatch arises or the Owner asks about the preference.
 
 ## Mutation Boundary
 

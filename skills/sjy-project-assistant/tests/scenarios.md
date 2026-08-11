@@ -137,14 +137,14 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Expected mutation: Apply the requested edit but do not mutate PROJECT or STATE.
 - Expected stop / handoff behavior: Verify and report the edit; no continuity ceremony or tool handoff.
 
-## 16. Planning → Claude Implementation Handoff
+## 16. Planning → Implementation Responsibility Transition
 
-- Preconditions: Planning is complete, the resulting plan exists, and PROJECT prefers Claude for Implementation.
+- Preconditions: Planning is complete, the resulting plan exists, and PROJECT contains an applicable collaboration preference for Implementation.
 - User intent: Prepare the next major responsibility.
 - Expected files read: PROJECT, STATE, current or generated AGENTS governance, the completed planning artifact, and routing guidance.
-- Expected semantic decision: Apply the AGENTS current/next routing distinction, identify the meaningful boundary from Planning to Implementation, and select Claude from the PROJECT mapping for next-responsibility Implementation before falling back to the current Codex executor.
+- Expected semantic decision: Apply the AGENTS current/next routing distinction, identify the meaningful boundary from Planning to Implementation, and surface the applicable PROJECT collaboration preference for Implementation once before using the current capable executor as fallback when the preference is absent or not selected.
 - Expected mutation: Sync STATE to reference the plan, set the next Responsibility to Implementation, and make the next action resumable.
-- Expected stop / handoff behavior: Recommend opening the repository in Claude and invoking `sjy-project-assistant`; stop before implementation unless the Project Owner explicitly overrides.
+- Expected transition behavior: Surface the applicable preference once as optional guidance. If the Project Owner says "continue here" and the current environment is capable, continue Implementation there; do not force a tool switch or repeat the preference before the Responsibility completes or changes.
 
 ## 17. Implementation → Independent Review
 
@@ -209,14 +209,14 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Expected mutation: Update STATE Executor only if Codex’s current execution must persist for resumption; leave long-term PROJECT preferences unchanged.
 - Expected stop / handoff behavior: Continue when authorized and capable; do not fail due to another unavailable tool.
 
-## 24. Codex + Claude Available
+## 24. Multiple Repository-Capable Executors Available
 
 - Preconditions: Both Codex and Claude are available and PROJECT provides responsibility preferences.
 - User intent: Decide where the next work should happen.
 - Expected files read: PROJECT, STATE, current responsibility/evidence, and routing guidance.
-- Expected semantic decision: Recommend the preferred executor only when routing is meaningful, and switch tools only at a major responsibility boundary.
-- Expected mutation: Sync resumable state at a real handoff boundary; do not churn STATE or tools between small tasks.
-- Expected stop / handoff behavior: Provide an exact resume action and stop at a cross-tool boundary unless the Project Owner explicitly requests continuation in the current tool.
+- Expected semantic decision: Surface the applicable collaboration preference only when routing is meaningful, and consider a tool change only at a natural major Responsibility transition.
+- Expected mutation: Sync resumable state at a real Responsibility transition; do not churn STATE or tools between small tasks.
+- Expected transition behavior: Surface the applicable preference once, provide relevant resume context when needed, and follow the Project Owner's choice. A capable current environment may continue after explicit "continue here" without another preference reminder before the Responsibility completes or changes.
 
 ## 25. Ordinary Project Q&A
 
@@ -229,10 +229,10 @@ Each scenario records preconditions, user intent, expected files read, expected 
 
 ## 26. Unmapped Next Responsibility
 
-- Preconditions: The current Executor is Codex and PROJECT has no Preferred Executor mapping for the next Documentation responsibility.
+- Preconditions: The current Executor is Codex and PROJECT has no applicable collaboration preference for the next Documentation Responsibility.
 - User intent: Route the completed current work to Documentation.
 - Expected files read: PROJECT, STATE, and routing guidance.
-- Expected semantic decision: Use Codex as the fallback because the next Responsibility is unmapped; do not treat STATE Executor as a higher-priority PROJECT mapping.
+- Expected semantic decision: Use Codex as the fallback because the next Responsibility has no applicable PROJECT collaboration preference; do not treat STATE Executor as a higher-priority PROJECT preference.
 - Expected mutation: Update STATE only if the new current responsibility must persist for future resumption; do not add a PROJECT preference without Project Owner intent.
 - Expected stop / handoff behavior: Recommend Codex as the fallback and continue or stop according to the user's requested scope.
 
@@ -296,7 +296,7 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - User intent: Choose an executor for direct repository Implementation and related advisory work.
 - Expected files read: Current Responsibility, PROJECT preferences when present, available-environment facts, and evidence of the capabilities required by the work.
 - Expected semantic decision: The advisory tool may be recommended for Research, Requirements discussion, early analysis, document drafting, or technical comparison, but is not preferred for Implementation that requires direct repository reading, local mutation, terminal execution, testing, Git inspection, and continuous execution. Base this judgment on current capability facts rather than a commercial brand.
-- Expected mutation: Use the existing PROJECT and STATE schema only; do not add Executor Type, capability storage, or a special Web / Chat handoff protocol.
+- Expected mutation: Use the existing PROJECT and STATE schema only; do not add Executor Type, capability storage, or a special Web / Chat transition protocol.
 - Expected stop / handoff behavior: Recommend an available repository-capable executor for direct Implementation while preserving Project Owner instruction as the highest-priority routing input.
 
 ## 34. Owner Explicitly Selects an Incapable Executor
@@ -322,15 +322,15 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Preconditions: The current capable Agent/environment is already performing the active Responsibility, while PROJECT records a different preferred Executor for that same Responsibility.
 - User intent: Continue the active work in the current environment.
 - Expected files read: PROJECT, STATE, the current Owner request, and only the repository evidence needed for the active work.
-- Expected semantic decision: Treat PROJECT collaboration guidance as a soft preference. Do not interrupt active work or recommend switching merely because PROJECT prefers another Executor when the Owner is already continuing in the current capable environment.
+- Expected semantic decision: Treat PROJECT collaboration guidance as a soft preference. Do not interrupt active work or recommend switching merely because PROJECT records another collaboration preference when the Owner is already continuing in the current capable environment.
 - Expected mutation: Keep PROJECT unchanged. Update STATE Executor only when the current execution becomes durable resumable reality.
 - Expected stop / handoff behavior: Continue the active Responsibility without a preference-based switch reminder. Capability mismatch, if present, is still reported normally.
 
-## 37. Natural Handoff — Preference Surfaces Once
+## 37. Natural Responsibility Transition — Preference Surfaces Once
 
-- Preconditions: The current major Responsibility is complete, the next major Responsibility is different, and PROJECT contains a relevant Executor preference for that next Responsibility.
+- Preconditions: The current major Responsibility is complete, the next major Responsibility is different, and PROJECT contains an applicable collaboration preference for that next Responsibility.
 - User intent: Decide how to continue into the next Responsibility.
 - Expected files read: PROJECT, STATE, produced artifacts, current Owner request, and current environment capability facts.
-- Expected semantic decision: At the natural handoff boundary, surface the relevant PROJECT preference once as an optional recommendation and state that the Owner may continue here if the current environment is capable. If the Owner says “continue here”, treat that as explicit Owner instruction and do not mention that Responsibility’s PROJECT Executor preference again until the Responsibility completes or changes, unless a capability mismatch arises or the Owner asks about it.
+- Expected semantic decision: At the natural Responsibility transition, surface the applicable PROJECT collaboration preference once as an optional recommendation and state that the Owner may continue here if the current environment is capable. If the Owner says “continue here”, treat that as explicit Owner instruction and do not mention that Responsibility’s applicable PROJECT collaboration preference again before that Responsibility completes or changes, unless a capability mismatch arises or the Owner asks about it.
 - Expected mutation: Make STATE resumable when continuity requires it. Do not rewrite PROJECT merely because the Owner chooses a temporary Executor.
-- Expected stop / handoff behavior: Follow the Owner’s choice. Capability mismatch remains mandatory to report and is not suppressed by the soft-preference rule.
+- Expected transition behavior: Follow the Owner’s choice. Capability mismatch remains mandatory to report and is not suppressed by the soft-preference rule.
