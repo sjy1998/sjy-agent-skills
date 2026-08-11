@@ -450,8 +450,54 @@ def test_unmodified_project_template_placeholders_are_errors():
 
     diagnostics = validate_project_text(template.read_text(encoding="utf-8"))
 
-    assert "PROJECT_NAME_PLACEHOLDER" in codes(diagnostics)
-    assert "PROJECT_PURPOSE_PLACEHOLDER" in codes(diagnostics)
+    assert {
+        "PROJECT_NAME_PLACEHOLDER",
+        "PROJECT_PURPOSE_PLACEHOLDER",
+        "PROJECT_KEY_REFERENCES_PLACEHOLDER",
+        "PROJECT_AI_COLLABORATION_PLACEHOLDER",
+    }.issubset(codes(diagnostics))
+    assert "ERROR" in levels(diagnostics)
+
+
+def test_project_key_references_template_placeholders_are_errors():
+    text = """# Project
+
+Name: Demo
+Purpose: Demo project.
+
+## Key References
+
+- <label>: <repository locator>
+
+## AI Collaboration
+
+- Prefer repository-capable execution.
+"""
+
+    diagnostics = validate_project_text(text)
+
+    assert "PROJECT_KEY_REFERENCES_PLACEHOLDER" in codes(diagnostics)
+    assert "ERROR" in levels(diagnostics)
+
+
+def test_project_ai_collaboration_template_placeholder_is_error():
+    text = """# Project
+
+Name: Demo
+Purpose: Demo project.
+
+## Key References
+
+- README: README.md
+
+## AI Collaboration
+
+- <durable collaboration preference or constraint>
+"""
+
+    diagnostics = validate_project_text(text)
+
+    assert "PROJECT_AI_COLLABORATION_PLACEHOLDER" in codes(diagnostics)
     assert "ERROR" in levels(diagnostics)
 
 
@@ -573,11 +619,15 @@ def test_normal_markdown_and_technical_angle_brackets_are_not_placeholders():
     project_text = """# Project
 
 Name: Generic <T> Parser
-Purpose: Parse Map<K, V> syntax and preserve <code> examples.
+Purpose: Parse Map<K, V> and MyProject<T> syntax and preserve <code> and <html> examples.
+
+## Key References
+
+- Generics: docs/MyProject<T>.md
 
 ## AI Collaboration
 
-- Keep C++ review with the current repository-capable executor.
+- Keep C++ review for Result<T> and Map<K,V> with the current repository-capable executor.
 """
     state_text = """# Current State
 
