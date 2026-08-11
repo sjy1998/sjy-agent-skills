@@ -428,3 +428,117 @@ Observed:
 - Overall: PASS.
 
 V1.1.2 is the current validated implementation release. No further V1.1.2 behavioral patch is justified by this validation. V1.1.x is ready to freeze after this validation-closure documentation is merged.
+
+---
+
+## V1.2.0 Release Validation Closure
+
+### Scope
+
+V1.2.0 keeps the V1 project protocol and the existing Initialize / Adopt / Resume user-facing workflows while refining cross-agent collaboration semantics:
+
+- PROJECT AI Collaboration records durable preferences and constraints rather than mandatory assignments.
+- An explicit Project Owner request to use the current capable Agent/environment overrides stored Executor preferences for that work without rewriting the long-term PROJECT preference.
+- STATE Executor records current resumable reality and is not an execution lock.
+- A relevant PROJECT Executor preference may surface once at a natural transition to a different major Responsibility; after the Owner explicitly chooses the current capable environment, the preference must not interfere with continued work.
+- Existing Responsibility / Preferred Executor tables remain valid for previously managed projects; new projects may use sparse collaboration preferences.
+- Portable Prompt / prompt-export functionality is not part of V1.2.0.
+
+### Deterministic Regression
+
+Result: PASS
+
+- Full repository Skill test suite: 60 passed, 0 failed.
+- Protocol validation: PASS for managed-active and managed-idle fixtures and for the sparse-preference PROJECT form.
+- Python helper compilation: PASS.
+- `git diff --check`: PASS.
+- Project Protocol version remains V1.
+
+### Codex Black-box Validation
+
+- Date: 2026-08-11
+- Runtime: real Codex project sessions
+- Candidate Skill loaded explicitly from the validation project
+- Superpowers and other Skills explicitly disabled to isolate `sjy-project-assistant`
+
+#### T1 — Current Owner Overrides Preference
+
+Result: PASS
+
+Observed:
+- PROJECT preferred another Executor for Implementation and STATE also recorded that prior Executor.
+- The Owner explicitly asked the current Codex environment to continue.
+- Codex continued in the current capable environment, completed the implementation, and ran the focused tests successfully.
+- PROJECT long-term collaboration preference was not modified.
+- No commit, push, or PR was created.
+
+#### T2 — Advice Does Not Imply Takeover
+
+Result: PASS
+
+Observed:
+- Codex resumed the project and identified another Executor as the current Implementation executor.
+- The Owner asked only for advice about what that Executor should do next.
+- Codex produced actionable next-step guidance without modifying files or taking over the Responsibility.
+
+#### T4 — Natural Handoff Preference
+
+Result: PASS
+
+Observed:
+- At the Implementation → Review boundary, Codex surfaced the relevant PROJECT Review preference once as an optional recommendation.
+- After the Owner explicitly chose to continue Review in the current environment, Codex completed the Review without routing interruption or repeated switch recommendation.
+- The temporary choice did not rewrite the long-term PROJECT preference.
+
+### Claude Code Black-box Validation
+
+- Date: 2026-08-11
+- Runtime: real Claude Code project sessions
+- Candidate Skill loaded explicitly from the validation project
+- Superpowers and other Skills explicitly disabled to isolate `sjy-project-assistant`
+- Scenarios mirrored the Codex validation so the current Agent and stored preferences were not brand-locked.
+
+#### T1 — Current Owner Overrides Preference
+
+Result: PASS
+
+Observed:
+- PROJECT preferred Codex for routine Implementation and STATE recorded Codex.
+- The Owner explicitly asked the current Claude Code environment to continue.
+- Claude Code correctly treated the Owner instruction as higher priority, implemented the function, and passed the focused tests.
+- PROJECT remained unchanged; STATE was minimally synchronized to current resumable reality.
+- No commit, push, or PR was created.
+
+#### T2 — Advice Does Not Imply Takeover
+
+Result: PASS
+
+Observed:
+- Claude Code resumed the project with Codex as the current Implementation executor.
+- The Owner asked only for the next-step advice to give Codex.
+- Claude Code supplied the guidance without modifying project files or taking over the Responsibility.
+
+#### T4 — Natural Handoff Preference
+
+Result: PASS
+
+Observed:
+- At the Implementation → Review boundary, Claude Code surfaced the Codex Review preference once as optional guidance and confirmed that the current environment could continue if the Owner chose it.
+- After the Owner chose to continue locally, Claude Code completed Review and did not issue another switch recommendation.
+- One intermediate response referred to the already-surfaced preference while explicitly stating it was not repeating the reminder; this caused no routing interruption. The final Review response did not repeat the preference.
+- Review completed successfully and STATE was allowed to converge to Idle when continuity required it.
+
+### Final Judgment
+
+- Codex T1 / T2 / T4: PASS.
+- Claude Code T1 / T2 / T4: PASS.
+- Cross-agent preference semantics: PASS.
+- Current-Owner override semantics: PASS.
+- Natural-handoff reminder semantics: PASS.
+- Backward compatibility with existing Responsibility / Preferred Executor mappings: PASS.
+- Architecture regression: none observed.
+- Project Protocol version change: none.
+- New persistent project files or workflows: none.
+- Portable Prompt / prompt-export capability: intentionally excluded from V1.2.0.
+
+Overall: PASS — V1.2.0 is validated for release within the tested Codex and Claude Code execution modes.

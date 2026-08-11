@@ -1,9 +1,9 @@
 ---
 name: sjy-project-assistant
-description: Use when entering a repository in a fresh context, adopting an existing project for AI collaboration, resuming unfinished project work, determining the next major responsibility, or preparing cross-tool continuation.
+description: Use when entering a repository in a fresh context, adopting an existing project for AI collaboration, resuming unfinished project work, or determining the next major responsibility.
 metadata:
   author: sjy1998
-  version: "1.1.3"
+  version: "1.2.0"
   compatibility: Requires Python 3.10 or later.
 ---
 
@@ -11,7 +11,7 @@ metadata:
 
 ## Purpose
 
-Use this Skill to establish or recover lightweight repository-native AI project governance and continuity.
+Use this Skill to establish or recover lightweight repository-backed AI project governance and continuity across contexts, tools, models, and agent environments.
 
 The repository is durable project truth. Chat context is temporary working memory.
 
@@ -22,8 +22,7 @@ Treat these as the main user-facing entry patterns:
 - initialize a new / Greenfield project;
 - adopt an existing / Brownfield project;
 - resume or continue a managed project;
-- ask for current project status or the next major action;
-- prepare or reason about a major cross-tool continuation.
+- ask for current project status or the next major action.
 
 `Guide / Route` and `Sync` are internal actions; users do not need to invoke them by name.
 
@@ -35,8 +34,8 @@ Treat these as the main user-facing entry patterns:
 - Reuse before create.
 - Index; do not duplicate.
 - Preserve existing work.
-- Preferred executor is guidance, not permanent ownership.
-- Executor labels are open; recommend from Project Owner preference, Responsibility, available tools, and actual capability.
+- Collaboration preferences are guidance, not assignments.
+- Executor labels are open; recommend from Project Owner preference, Responsibility, available tools, and actual capability in the current environment, not the agent or model brand.
 - Prefer a repository-capable executor when the Responsibility requires direct repository work.
 - Project Owner instruction overrides project preferences.
 - Project Owner routing priority does not create capabilities the selected executor lacks.
@@ -100,7 +99,10 @@ When routing to a different next Responsibility:
 3. current Executor as fallback when the next Responsibility is unmapped;
 4. Skill default recommendation.
 
-STATE Executor describes who is doing the current Responsibility; it does not override the PROJECT mapping for a different next Responsibility. Do not modify PROJECT preference for a temporary executor override.
+A request for the current Agent/environment to perform or continue a Responsibility counts as explicit Project Owner instruction; a request to advise about another Executor does not.
+
+STATE Executor describes who is doing the current Responsibility; it is not a lock and does not override the PROJECT preference for a different next Responsibility. Do not modify PROJECT preference for a temporary executor override.
+After the Owner explicitly chooses the current capable Agent/environment for a Responsibility, do not mention that Responsibility’s PROJECT Executor preference again until the Responsibility completes or changes, unless a capability mismatch arises or the Owner asks about the preference.
 
 ## Mutation Boundary
 

@@ -9,8 +9,6 @@ Purpose: <one concise purpose>
 
 ## AI Collaboration
 
-| Responsibility | Preferred Executor |
-|---|---|
-| <responsibility> | <executor> |
+- <durable collaboration preference or constraint>
 
 <!-- Optional sections: Technical Context, Engineering, Critical Constraints -->
