@@ -3,7 +3,7 @@ name: sjy-project-assistant
 description: Use when a repository needs Initialize or Adopt for AI collaboration; when recovering project context or project status in a fresh context, finding where we left off, or resuming/continuing previous work; when continuing across Codex, Claude Code, tools, agents, or environments (cross-tool, cross-agent, or agent-environment continuation); or when determining the next major Responsibility. Do not use for ordinary scoped coding, small edits, standalone PR review, or technical Q&A that does not require project recovery or routing.
 metadata:
   author: sjy1998
-  version: "1.2.2"
+  version: "1.2.3"
   compatibility: Requires Python 3.10 or later.
 ---
 

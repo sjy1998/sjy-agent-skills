@@ -111,12 +111,12 @@ def test_v12_has_no_portable_prompt_product_surface():
         assert forbidden not in product_text
 
 
-def test_v122_skill_frontmatter_is_codex_compatible_and_records_runtime_requirement():
+def test_v123_skill_frontmatter_is_codex_compatible_and_records_runtime_requirement():
     text = read("SKILL.md")
 
     frontmatter = text.split("---", 2)[1]
     assert "\ncompatibility:" not in frontmatter
-    assert "metadata:\n  author: sjy1998\n  version: \"1.2.2\"" in frontmatter
+    assert "metadata:\n  author: sjy1998\n  version: \"1.2.3\"" in frontmatter
     assert "  compatibility: Requires Python 3.10 or later." in frontmatter
     assert "Python 3.10 or later" in text.split("---", 2)[2]
 

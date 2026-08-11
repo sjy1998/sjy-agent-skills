@@ -14,6 +14,14 @@ PROJECT_FIELD_PLACEHOLDERS = {
     "Purpose": ("<one concise purpose>",),
 }
 
+PROJECT_SECTION_PLACEHOLDERS = {
+    "Key References": (
+        "<label>",
+        "<repository locator>",
+    ),
+    "AI Collaboration": ("<durable collaboration preference or constraint>",),
+}
+
 STATE_FIELD_PLACEHOLDERS = {
     "Objective": ("<current objective>",),
     "Responsibility": ("<current responsibility>",),
@@ -101,6 +109,16 @@ def validate_project_text(text: str) -> list[Diagnostic]:
                 "PROJECT.md is missing the '## Key References' section.",
             )
         )
+    for heading in PROJECT_SECTION_PLACEHOLDERS:
+        body = _section_body(text, heading)
+        if body and _contains_template_placeholder(body, PROJECT_SECTION_PLACEHOLDERS[heading]):
+            diagnostics.append(
+                _diagnostic(
+                    "ERROR",
+                    f"PROJECT_{heading.upper().replace(' ', '_')}_PLACEHOLDER",
+                    f"PROJECT.md section '## {heading}' still contains a Project Assistant template placeholder.",
+                )
+            )
     return diagnostics
 
 

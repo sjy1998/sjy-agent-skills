@@ -604,3 +604,9 @@ The patch:
 - Python helper compilation: PASS.
 - `git diff --check`: PASS.
 - Project Protocol remains V1; no persistent state, workflow, routing, or product-scope expansion was added.
+
+---
+
+## V1.2.3 Validation Closure
+
+V1.2.3 only closes PROJECT template placeholder validation gaps. It does not modify Project Protocol, routing, trigger behavior, or add product functionality. The complete unmodified PROJECT template now reports all four placeholder areas, and a PROJECT with Name and Purpose filled no longer passes while section placeholders remain.
