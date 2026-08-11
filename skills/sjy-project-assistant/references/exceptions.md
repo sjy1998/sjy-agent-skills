@@ -41,7 +41,7 @@ When the preferred Executor is unavailable or demonstrably incapable of the requ
 
 Project Owner routing priority does not create a capability the selected Executor lacks. When the Owner explicitly selects an Executor that cannot perform the Responsibility in its current usage mode, acknowledge the choice, identify the concrete capability mismatch, state that direct execution is infeasible in that mode, and actively recommend either an available capable fallback or a feasible change of execution mode before proceeding. Await or follow the Owner's decision; do not pretend the missing capability exists, silently ignore the choice, continue ordinary implementation intake as if no mismatch exists, or rewrite the PROJECT long-term preference for a temporary mismatch.
 
-At a major handoff boundary, make STATE resumable, reference the produced artifacts, recommend the selected executor, provide the exact resume action, and stop unless the Project Owner asks to continue. Do not create a special handoff protocol for advisory or Web / Chat tools.
+At a natural transition to a different major Responsibility, make STATE resumable when future repository continuity requires it, reference produced artifacts, and surface any relevant PROJECT Executor preference once as an optional recommendation with the exact resume action. If the Owner chooses to continue in the current capable environment, do not repeat the preference reminder for that Responsibility. Scope execution to capabilities the selected environment actually has; do not pretend unavailable repository operations occurred.
 
 ## 5. Repository Safety Issue
 

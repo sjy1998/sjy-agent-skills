@@ -7,7 +7,7 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Preconditions: An unmanaged, Greenfield-like repository has no Project Assistant continuity assets.
 - User intent: Initialize lightweight project governance and continuity.
 - Expected files read: Existing repository files and engineering entry points; inspect before asking.
-- Expected semantic decision: Infer available facts, but a high-risk unknown must be asked rather than inferred; exceed the default three-decision-round budget only when more Project Owner input is required for safety or to avoid a material governance/repository error, recommend a minimal Responsibility Map, and preview the proposal.
+- Expected semantic decision: Infer available facts, but a high-risk unknown must be asked rather than inferred; exceed the default three-decision-round budget only when more Project Owner input is required for safety or to avoid a material governance/repository error, recommend sparse durable collaboration preferences only where useful, and preview the proposal.
 - Expected mutation: After Project Owner confirmation, create `AGENTS.md`, `.ai-project/PROJECT.md`, and `.ai-project/STATE.md`; create a tool adapter only when the project actually needs one.
 - Expected stop / handoff behavior: Recommend the next engineering workflow and stop without automatically entering implementation.
 
@@ -16,7 +16,7 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Preconditions: An unmanaged existing repository contains code, documentation, conventions, and possibly existing governance.
 - User intent: Adopt Project Assistant without redesigning the project.
 - Expected files read: Existing governance, README/engineering guides, manifests, relevant plans, tests, and live repository/Git evidence sufficient to map current reality.
-- Expected semantic decision: Analyze only Governance, Continuity, and Routing gaps; recommend a minimal Responsibility Map and Minimal Adoption Proposal that preserves existing assets and current lifecycle position.
+- Expected semantic decision: Analyze only Governance, Continuity, and Routing gaps; recommend sparse durable collaboration preferences only where they materially help future continuation, and produce a Minimal Adoption Proposal that preserves existing assets and current lifecycle position.
 - Expected mutation: After confirmation, add only the minimal managed governance and continuity content; preserve existing `AGENTS.md` content and use locators rather than copied documentation.
 - Expected stop / handoff behavior: Resume the actual current work, or remain Idle; do not force a redesign, audit, or lifecycle restart.
 
@@ -251,7 +251,7 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - User intent: Initialize the project.
 - Expected files read: Inspect the directory and available repository facts before asking; existing requirements, prior projects, reference code, API documentation, and technical constraints are optional evidence rather than required intake.
 - Expected semantic decision: Ask for the missing Project, Next, and Tools information in one consolidated intake round by default. Explain that Next may be Idle. In the same response, briefly state that existing requirements, reference projects, prior code, or other materials may be supplied as optional evidence and are not required for Initialize. Ask a follow-up only when a remaining high-impact ambiguity would affect correct initialization.
-- Expected mutation: Do not write governance or continuity files before the Project Owner responds, confirms the proposed Responsibility / Executor Map, and sees the exact mutation preview.
+- Expected mutation: Do not write governance or continuity files before the Project Owner responds, confirms any proposed durable collaboration preferences, and sees the exact mutation preview.
 - Expected stop / handoff behavior: Await the consolidated intake response; do not create placeholder requirements, architecture, plan, or roadmap documents.
 
 ## 29. Empty Greenfield — Fully Specified
@@ -259,7 +259,7 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Preconditions: The inspected directory is empty and unmanaged, and the Project Owner has already supplied the project purpose, initial objective, and available tools.
 - User intent: Initialize the project with the supplied facts.
 - Expected files read: Inspect the directory and use the user request and supplied materials as evidence.
-- Expected semantic decision: Ask zero redundant questions. Infer Name, Purpose, Initial Objective, and Initial Responsibility, then recommend a small practical Responsibility / Executor Map only where Project Owner preference or actual capability evidence is sufficient.
+- Expected semantic decision: Ask zero redundant questions. Infer Name, Purpose, Initial Objective, and Initial Responsibility, then recommend only sparse durable collaboration preferences where Project Owner preference or actual capability evidence makes them useful; do not require an exhaustive Responsibility / Executor map.
 - Expected mutation: After Owner confirmation, present an exact preview and create exactly `AGENTS.md`, `.ai-project/PROJECT.md`, and `.ai-project/STATE.md` using the safe mutation and validation helpers. Tool-specific adapters are not part of the default Empty Greenfield output; availability of Codex, Claude Code, OpenCode, or another tool alone is not sufficient reason to create one. Write STATE Relevant entries as direct parseable locators without descriptive prefixes, and include only meaningful locators that already exist after initialization; do not create placeholder artifacts to satisfy validation.
 - Expected stop / handoff behavior: Recommend the next action after protocol validation; do not create placeholder planning documents or automatically begin another workflow.
 
@@ -278,16 +278,16 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - User intent: Adopt Project Assistant without interrupting current work.
 - Expected files read: Existing governance, README and relevant documentation, manifests, source, tests, plans when present, and focused live repository/Git evidence.
 - Expected semantic decision: Infer the Current Objective and Current Responsibility from repository evidence. Do not ask the Project Owner to restate the project stage, restart a lifecycle, or return to Requirements, Architecture, or Planning when the evidence already establishes Implementation.
-- Expected mutation: Recommend only the missing, useful governance, continuity, and small practical Responsibility / Executor mapping; write it only after confirmation and preview.
+- Expected mutation: Recommend only the missing, useful governance, continuity, and sparse durable collaboration preferences; write them only after confirmation and preview.
 - Expected stop / handoff behavior: Resume the repository's actual Implementation work after protocol validation.
 
-## 32. Multi-Executor Recommendation
+## 32. Sparse Collaboration Preferences
 
-- Preconditions: The Project Owner identifies Codex, Claude Code, OpenCode, and ChatGPT as available tools, and the project has no mature Responsibility / Executor Map.
-- User intent: Receive a practical collaboration recommendation.
+- Preconditions: The Project Owner identifies Codex, Claude Code, OpenCode, and ChatGPT as available tools, and the project has no mature AI Collaboration guidance.
+- User intent: Receive a practical, lightweight collaboration recommendation without assigning every Responsibility.
 - Expected files read: PROJECT and STATE when present, project evidence that defines the responsibilities, and facts about how the listed tools are currently available and what work they can actually perform.
-- Expected semantic decision: Keep Executor labels open and do not reduce the recommendation to Codex and Claude. Recommend executors from Project Owner preference, Responsibility, available tools, and actual ability without assigning any tool a fixed global role. Keep the map small and practical rather than constructing a complete lifecycle.
-- Expected mutation: Persist the mapping only after Owner confirmation and only as normal PROJECT collaboration preferences; do not add an executor registry, capability database, or tool profile.
+- Expected semantic decision: Keep Executor labels open and do not reduce the recommendation to Codex and Claude. Recommend only stable preferences that materially help future continuation, based on Project Owner preference, Responsibility, available tools, and actual ability. Leave uncertain Responsibilities unmapped rather than constructing a complete lifecycle or exhaustive Responsibility / Executor map.
+- Expected mutation: Persist only the confirmed sparse PROJECT collaboration preferences; do not add an executor registry, capability database, tool profile, or mandatory full mapping.
 - Expected stop / handoff behavior: Apply the existing routing precedence and continue or route only at a meaningful responsibility boundary.
 
 ## 33. Non-Repository Tool Not Preferred for Implementation
@@ -307,3 +307,30 @@ Each scenario records preconditions, user intent, expected files read, expected 
 - Expected semantic decision: Acknowledge that the Owner instruction has routing priority, then explicitly report the concrete capability mismatch and state that direct execution is infeasible in the selected Executor's current mode. Actively recommend an available capable fallback or a feasible change of execution mode before proceeding; do not continue ordinary implementation intake as if no mismatch exists.
 - Expected mutation: Do not pretend the selected Executor has unavailable capabilities, silently ignore the Owner choice, or rewrite the PROJECT long-term preference for this temporary mismatch.
 - Expected stop / handoff behavior: Await or follow the Project Owner's choice between the capable fallback and feasible execution-mode change.
+
+## 35. Current Agent Explicit Continue
+
+- Preconditions: PROJECT prefers Claude Code for the current Implementation Responsibility, but the Project Owner is interacting with another repository-capable Agent/environment that can perform the required work.
+- User intent: Explicitly asks the current Agent/environment to continue the Implementation now.
+- Expected files read: PROJECT, STATE, the explicit Owner request, current environment capability facts, and the minimum relevant implementation evidence.
+- Expected semantic decision: Treat the request for the current Agent/environment to perform or continue the Responsibility as explicit Project Owner instruction. Use the current capable environment for this work without treating the prior PROJECT preference as a lock. A request merely asking the current Agent to advise about Claude Code would not count as a takeover.
+- Expected mutation: Do not rewrite the long-term PROJECT preference for a temporary override. Update STATE Executor only if the current execution becomes durable resumable reality.
+- Expected stop / handoff behavior: Continue in the current capable environment within the requested scope; do not force a handoff solely because PROJECT records another preference.
+
+## 36. Active Work — Preference Does Not Interrupt
+
+- Preconditions: The current capable Agent/environment is already performing the active Responsibility, while PROJECT records a different preferred Executor for that same Responsibility.
+- User intent: Continue the active work in the current environment.
+- Expected files read: PROJECT, STATE, the current Owner request, and only the repository evidence needed for the active work.
+- Expected semantic decision: Treat PROJECT collaboration guidance as a soft preference. Do not interrupt active work or recommend switching merely because PROJECT prefers another Executor when the Owner is already continuing in the current capable environment.
+- Expected mutation: Keep PROJECT unchanged. Update STATE Executor only when the current execution becomes durable resumable reality.
+- Expected stop / handoff behavior: Continue the active Responsibility without a preference-based switch reminder. Capability mismatch, if present, is still reported normally.
+
+## 37. Natural Handoff — Preference Surfaces Once
+
+- Preconditions: The current major Responsibility is complete, the next major Responsibility is different, and PROJECT contains a relevant Executor preference for that next Responsibility.
+- User intent: Decide how to continue into the next Responsibility.
+- Expected files read: PROJECT, STATE, produced artifacts, current Owner request, and current environment capability facts.
+- Expected semantic decision: At the natural handoff boundary, surface the relevant PROJECT preference once as an optional recommendation and state that the Owner may continue here if the current environment is capable. If the Owner says “continue here”, treat that as explicit Owner instruction and do not mention that Responsibility’s PROJECT Executor preference again until the Responsibility completes or changes, unless a capability mismatch arises or the Owner asks about it.
+- Expected mutation: Make STATE resumable when continuity requires it. Do not rewrite PROJECT merely because the Owner chooses a temporary Executor.
+- Expected stop / handoff behavior: Follow the Owner’s choice. Capability mismatch remains mandatory to report and is not suppressed by the soft-preference rule.

@@ -9,8 +9,11 @@ This project uses `sjy-project-assistant` for AI project governance and continui
 - Preserve existing code, documents, conventions, and unfinished work unless explicitly instructed otherwise.
 - Reuse existing repository artifacts instead of duplicating them into a parallel documentation system.
 - Do not assume the currently opened AI tool automatically owns the current work.
+- PROJECT executor preferences are soft guidance, not assignments.
+- STATE executor records current work rather than permanent ownership.
+- An explicit Project Owner request may use the current Agent/environment when it has the required capability; capability mismatch must be reported rather than simulated.
 
-Use `sjy-project-assistant` when entering the repository in a fresh context, resuming unfinished work, determining project status or the next major action, crossing a major responsibility boundary, or preparing a cross-tool continuation.
+Use `sjy-project-assistant` when entering the repository in a fresh context, resuming unfinished work, determining project status or the next major action, or crossing a major responsibility boundary.
 
 Project continuity:
 - Stable project map: `.ai-project/PROJECT.md`
@@ -38,7 +41,7 @@ When routing to a different next Responsibility:
 
 STATE Executor describes current work and does not override a PROJECT mapping for a different next Responsibility.
 
-When the next major responsibility prefers a different tool, make the state resumable, reference existing artifacts, recommend the preferred executor, and stop before automatically entering the next major responsibility unless explicitly asked to continue.
+At a natural transition to a different next major Responsibility, make the state resumable, reference existing artifacts, and surface the relevant PROJECT preference once as an optional recommendation. If the Owner says “continue here” and the current environment is capable, continue there and do not mention that Responsibility’s PROJECT Executor preference again until the Responsibility completes or changes, unless a capability mismatch arises or the Owner asks about it.
 
 Read-only orientation should not mutate project state. Update PROJECT / STATE only when durable project facts or resumable work materially change.
 

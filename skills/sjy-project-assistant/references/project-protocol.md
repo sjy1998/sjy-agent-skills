@@ -7,7 +7,7 @@
 Core information:
 - non-empty project Name and Purpose;
 - key references / locators;
-- AI Collaboration responsibility preferences.
+- AI Collaboration preferences and constraints.
 
 `## AI Collaboration` is required. Missing `## Key References` remains a warning under the weak schema.
 
@@ -49,9 +49,9 @@ Do not use STATE as a task database, roadmap, changelog, handoff history, checkp
 
 Responsibility describes the kind of active work. It is an open, project-defined semantic label rather than a lifecycle enum. Common examples include Research, Requirements, Architecture, Planning, Implementation, Review, and Documentation; projects may instead use labels such as Modeling, Evaluation, Migration, Integration, or Deployment. Keep the vocabulary small, stable, and clear. These examples are guidance, not mandatory phases.
 
-Executor describes who or what performs a Responsibility. It is an open, project-defined label and is not limited to any fixed set of tools. PROJECT Preferred Executor is a long-term project preference. STATE Executor is the current actual executor.
+Executor describes who or what performs a Responsibility. It is an open, project-defined label and is not limited to any fixed set of tools. PROJECT AI Collaboration stores durable preferences and constraints, not assignments. Existing Responsibility / Preferred Executor tables remain valid, but new projects should record only the sparse preferences that materially help future continuation. STATE Executor records current resumable reality; it is not a lock.
 
-When recommending a Preferred Executor, consider only the Project Owner's preference, the Responsibility, available tools, and whether a candidate in its current usage mode can actually perform the required work. Recommend a mapping only where preference or capability evidence is sufficient; leave uncertain Responsibilities unmapped rather than assigning brand-specific roles to complete the map or use every available tool. For work requiring direct repository access, local file mutation, terminal execution, testing, Git inspection, or continuous implementation, prefer an available executor with those capabilities. Do not infer permanent brand-specific roles or persist an executor registry, capability database, or tool profile.
+When recommending collaboration preferences, consider only the Project Owner's preference, the Responsibility, available tools, and whether a candidate in its current usage mode can actually perform the required work. Recommend only useful stable preferences; leave uncertain Responsibilities unmapped rather than assigning brand-specific roles to complete a map or use every available tool. For work requiring direct repository access, local file mutation, terminal execution, testing, Git inspection, or continuous implementation, prefer an available executor with those capabilities. Do not infer permanent brand-specific roles or persist an executor registry, capability database, or tool profile.
 
 Current Responsibility executor precedence:
 1. explicit Project Owner instruction;
@@ -65,7 +65,7 @@ Different next Responsibility preferred-executor precedence:
 3. current Executor as fallback when the next Responsibility is unmapped;
 4. Skill default.
 
-STATE Executor records current reality and does not override the PROJECT mapping for a different next Responsibility.
+STATE Executor records current reality and does not override a PROJECT preference for a different next Responsibility. A current explicit Owner request to use another capable Executor may override prior preferences for that work without changing the long-term PROJECT preference.
 
 Capability-aware recommendation may inform a proposed Responsibility / Executor mapping or an executor recommendation; it does not change either routing precedence above. A temporary availability or capability mismatch does not by itself change the PROJECT long-term preference.
 
