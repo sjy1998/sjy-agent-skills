@@ -15,9 +15,9 @@ def test_managed_block_distinguishes_current_and_next_executor_routing():
     expected_order = (
         "For the current Responsibility:",
         "STATE current executor;",
-        "PROJECT preferred executor for the current Responsibility;",
+        "applicable PROJECT collaboration preference for the current Responsibility;",
         "When routing to a different next Responsibility:",
-        "PROJECT preferred executor for the next Responsibility;",
+        "applicable PROJECT collaboration preference for the next Responsibility;",
         "current executor as fallback when the next Responsibility is unmapped;",
     )
     positions = [governance.index(rule) for rule in expected_order]

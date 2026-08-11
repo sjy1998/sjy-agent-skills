@@ -4,12 +4,12 @@
 
 This project uses `sjy-project-assistant` for AI project governance and continuity.
 
-- The Project Owner retains final authority over project decisions and executor assignments.
+- The Project Owner retains final authority over project decisions and current execution choices.
 - The repository is the durable source of project truth; chat context is temporary working memory.
 - Preserve existing code, documents, conventions, and unfinished work unless explicitly instructed otherwise.
 - Reuse existing repository artifacts instead of duplicating them into a parallel documentation system.
 - Do not assume the currently opened AI tool automatically owns the current work.
-- PROJECT executor preferences are soft guidance, not assignments.
+- PROJECT collaboration preferences and constraints are soft guidance, not assignments or locks.
 - STATE executor records current work rather than permanent ownership.
 - An explicit Project Owner request may use the current Agent/environment when it has the required capability; capability mismatch must be reported rather than simulated.
 
@@ -30,18 +30,18 @@ For fresh or resumed work:
 For the current Responsibility:
 1. explicit Project Owner instruction;
 2. STATE current executor;
-3. PROJECT preferred executor for the current Responsibility;
+3. applicable PROJECT collaboration preference for the current Responsibility;
 4. Skill default.
 
 When routing to a different next Responsibility:
 1. explicit Project Owner instruction;
-2. PROJECT preferred executor for the next Responsibility;
+2. applicable PROJECT collaboration preference for the next Responsibility;
 3. current executor as fallback when the next Responsibility is unmapped;
 4. Skill default.
 
-STATE Executor describes current work and does not override a PROJECT mapping for a different next Responsibility.
+STATE Executor describes current work and does not override an applicable PROJECT collaboration preference for a different next Responsibility.
 
-At a natural transition to a different next major Responsibility, make the state resumable, reference existing artifacts, and surface the relevant PROJECT preference once as an optional recommendation. If the Owner says “continue here” and the current environment is capable, continue there and do not mention that Responsibility’s PROJECT Executor preference again until the Responsibility completes or changes, unless a capability mismatch arises or the Owner asks about it.
+At a natural transition to a different next major Responsibility, make the state resumable, reference existing artifacts, and surface the applicable PROJECT collaboration preference once as an optional recommendation. If the Owner says "continue here" and the current environment is capable, continue there and do not mention that Responsibility's applicable PROJECT collaboration preference again before that Responsibility completes or changes, unless a capability mismatch arises or the Owner asks about it.
 
 Read-only orientation should not mutate project state. Update PROJECT / STATE only when durable project facts or resumable work materially change.
 
