@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "skill": "sjy-project-assistant",
+  "cases": [
+    {
+      "id": "trigger-greenfield-initialize-01",
+      "should_trigger": true,
+      "category": "greenfield-initialize",
+      "prompt": "Initialize this new repository for durable AI project collaboration.",
+      "rationale": "Explicitly requests the Greenfield Initialize entry point."
+    },
+    {
+      "id": "trigger-greenfield-initialize-02",
+      "should_trigger": true,
+      "category": "greenfield-initialize",
+      "prompt": "这是一个空项目，请建立最小的 AI 项目治理和连续性文件。",
+      "rationale": "Requests initialization of an unmanaged Greenfield project."
+    },
+    {
+      "id": "trigger-brownfield-adopt-01",
+      "should_trigger": true,
+      "category": "brownfield-adopt",
+      "prompt": "Adopt this existing repository for Project Assistant without redesigning it.",
+      "rationale": "Explicitly requests Brownfield Adopt while preserving existing work."
+    },
+    {
+      "id": "trigger-brownfield-adopt-02",
+      "should_trigger": true,
+      "category": "brownfield-adopt",
+      "prompt": "把这个已有代码库接入轻量 AI 项目协作，但不要改变现有开发流程。",
+      "rationale": "Requests minimal adoption of an existing repository."
+    },
+    {
+      "id": "trigger-fresh-resume-01",
+      "should_trigger": true,
+      "category": "fresh-context-resume",
+      "prompt": "Open this repository in a fresh context and continue the previous work.",
+      "rationale": "Requires recovery before continuing in a fresh context."
+    },
+    {
+      "id": "trigger-fresh-resume-02",
+      "should_trigger": true,
+      "category": "fresh-context-resume",
+      "prompt": "我没有之前的聊天记录，帮我恢复这个项目并继续。",
+      "rationale": "Explicitly requests context recovery without prior chat history."
+    },
+    {
+      "id": "trigger-status-recovery-01",
+      "should_trigger": true,
+      "category": "project-status-recovery",
+      "prompt": "这个项目上次做到哪里了？",
+      "rationale": "Asks where the managed project left off."
+    },
+    {
+      "id": "trigger-status-recovery-02",
+      "should_trigger": true,
+      "category": "project-status-recovery",
+      "prompt": "帮我恢复一下当前项目状态。",
+      "rationale": "Directly requests project state recovery."
+    },
+    {
+      "id": "trigger-cross-tool-01",
+      "should_trigger": true,
+      "category": "cross-tool-continuation",
+      "prompt": "Claude Code 做完了架构，现在我想在 Codex 继续。",
+      "rationale": "Requires cross-tool continuation from Claude Code to Codex."
+    },
+    {
+      "id": "trigger-cross-tool-02",
+      "should_trigger": true,
+      "category": "cross-tool-continuation",
+      "prompt": "Continue the previous work in this project after moving from Codex to Claude Code.",
+      "rationale": "Requires continuity across agent environments."
+    },
+    {
+      "id": "trigger-next-responsibility-01",
+      "should_trigger": true,
+      "category": "next-responsibility-routing",
+      "prompt": "Architecture is complete; determine the next major Responsibility and executor.",
+      "rationale": "Requests routing at a major Responsibility boundary."
+    },
+    {
+      "id": "trigger-next-responsibility-02",
+      "should_trigger": true,
+      "category": "next-responsibility-routing",
+      "prompt": "这个项目下一步的主要责任是什么，应该在哪里继续？",
+      "rationale": "Requests the next major Responsibility and continuation route."
+    },
+    {
+      "id": "no-trigger-code-explanation-01",
+      "should_trigger": false,
+      "category": "code-explanation",
+      "prompt": "Explain what the parse_config function does.",
+      "rationale": "A local code explanation needs no project recovery or routing."
+    },
+    {
+      "id": "no-trigger-code-explanation-02",
+      "should_trigger": false,
+      "category": "code-explanation",
+      "prompt": "解释一下这段正则表达式。",
+      "rationale": "A narrow explanation is ordinary technical Q&A."
+    },
+    {
+      "id": "no-trigger-scoped-bugfix-01",
+      "should_trigger": false,
+      "category": "scoped-bugfix",
+      "prompt": "Fix the off-by-one error in paginate.py and run its focused test.",
+      "rationale": "A clearly scoped small bug fix does not require project recovery."
+    },
+    {
+      "id": "no-trigger-scoped-bugfix-02",
+      "should_trigger": false,
+      "category": "scoped-bugfix",
+      "prompt": "修复 login.py 第 42 行的空指针问题。",
+      "rationale": "The requested bug and location are already explicit."
+    },
+    {
+      "id": "no-trigger-rename-01",
+      "should_trigger": false,
+      "category": "rename",
+      "prompt": "Rename user_id to account_id in this module.",
+      "rationale": "A mechanical rename is a bounded coding edit."
+    },
+    {
+      "id": "no-trigger-readme-01",
+      "should_trigger": false,
+      "category": "readme-edit",
+      "prompt": "Change the README installation heading to Setup.",
+      "rationale": "A narrow documentation edit needs no continuity workflow."
+    },
+    {
+      "id": "no-trigger-readme-02",
+      "should_trigger": false,
+      "category": "readme-edit",
+      "prompt": "把 README 里的错别字改掉。",
+      "rationale": "A simple copy edit should not activate project recovery."
+    },
+    {
+      "id": "no-trigger-pr-review-01",
+      "should_trigger": false,
+      "category": "pr-review",
+      "prompt": "Review PR #42 for correctness and report findings only.",
+      "rationale": "A standalone PR review is already scoped and needs no project routing."
+    },
+    {
+      "id": "no-trigger-pr-review-02",
+      "should_trigger": false,
+      "category": "pr-review",
+      "prompt": "请单独审查这个 PR，不要修改代码。",
+      "rationale": "A standalone review should use the review workflow, not project recovery."
+    },
+    {
+      "id": "no-trigger-technical-question-01",
+      "should_trigger": false,
+      "category": "technical-question",
+      "prompt": "What is the difference between a Python list and tuple?",
+      "rationale": "Generic technical Q&A has no repository continuity intent."
+    },
+    {
+      "id": "no-trigger-technical-question-02",
+      "should_trigger": false,
+      "category": "technical-question",
+      "prompt": "什么时候应该使用 HTTP 409？",
+      "rationale": "A general technical question should not activate the project assistant."
+    },
+    {
+      "id": "no-trigger-rename-02",
+      "should_trigger": false,
+      "category": "rename",
+      "prompt": "Rename the local variable tmp to result in validator.py.",
+      "rationale": "A single local-variable rename is ordinary scoped coding."
+    }
+  ]
+}

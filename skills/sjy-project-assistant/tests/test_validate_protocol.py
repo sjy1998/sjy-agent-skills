@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from scripts.validate_protocol import (
     main,
     validate_project_text,
@@ -52,6 +54,24 @@ Purpose: Demo project.
 
     assert "PROJECT_KEY_REFERENCES_MISSING" in codes(diagnostics)
     assert "ERROR" not in levels(diagnostics)
+
+
+def test_valid_project_with_sparse_collaboration_preferences_has_no_errors():
+    text = """# Project
+
+Name: Demo
+Purpose: Demo project.
+
+## Key References
+
+- README: README.md
+
+## AI Collaboration
+
+- Prefer a repository-capable executor for direct implementation.
+"""
+
+    assert "ERROR" not in levels(validate_project_text(text))
 
 
 def test_active_state_requires_core_fields_and_sections():
@@ -420,6 +440,163 @@ Working.
 
 Continue.
 """.replace("\n", "\r\n")
+
+    assert "ERROR" not in levels(validate_project_text(project_text))
+    assert "ERROR" not in levels(validate_state_text(state_text))
+
+
+def test_unmodified_project_template_placeholders_are_errors():
+    template = Path(__file__).resolve().parents[1] / "assets" / "PROJECT.template.md"
+
+    diagnostics = validate_project_text(template.read_text(encoding="utf-8"))
+
+    assert "PROJECT_NAME_PLACEHOLDER" in codes(diagnostics)
+    assert "PROJECT_PURPOSE_PLACEHOLDER" in codes(diagnostics)
+    assert "ERROR" in levels(diagnostics)
+
+
+def test_unmodified_state_template_placeholders_are_errors():
+    template = Path(__file__).resolve().parents[1] / "assets" / "STATE.template.md"
+
+    diagnostics = validate_state_text(template.read_text(encoding="utf-8"))
+
+    assert {
+        "STATE_OBJECTIVE_PLACEHOLDER",
+        "STATE_RESPONSIBILITY_PLACEHOLDER",
+        "STATE_EXECUTOR_PLACEHOLDER",
+        "STATE_CURRENT_WORK_PLACEHOLDER",
+        "STATE_RELEVANT_PLACEHOLDER",
+        "STATE_NEXT_PLACEHOLDER",
+    }.issubset(codes(diagnostics))
+    assert "ERROR" in levels(diagnostics)
+
+
+@pytest.mark.parametrize(
+    ("field", "placeholder", "expected_code"),
+    [
+        ("Name", "<project name>", "PROJECT_NAME_PLACEHOLDER"),
+        ("Purpose", "<one concise purpose>", "PROJECT_PURPOSE_PLACEHOLDER"),
+    ],
+)
+def test_project_template_placeholder_is_rejected_when_surrounded_by_text(
+    field: str,
+    placeholder: str,
+    expected_code: str,
+):
+    values = {
+        "Name": "Demo",
+        "Purpose": "Demo project.",
+    }
+    values[field] = f"Replace {placeholder} before release"
+    text = f"""# Project
+
+Name: {values['Name']}
+Purpose: {values['Purpose']}
+
+## AI Collaboration
+
+- Keep preferences sparse.
+"""
+
+    assert expected_code in codes(validate_project_text(text))
+
+
+def test_template_section_placeholders_are_rejected_when_surrounded_by_text():
+    text = """# Current State
+
+Objective: Demo
+Responsibility: Implementation
+Executor: Codex
+
+## Current Work
+
+Replace <short current-work description> before release.
+
+## Relevant
+
+- Replace <most important locator> before release
+
+## Next
+
+Replace <one primary next action> before release.
+"""
+
+    result_codes = codes(validate_state_text(text))
+
+    assert "STATE_CURRENT_WORK_PLACEHOLDER" in result_codes
+    assert "STATE_RELEVANT_PLACEHOLDER" in result_codes
+    assert "STATE_NEXT_PLACEHOLDER" in result_codes
+
+
+@pytest.mark.parametrize(
+    ("field", "placeholder", "expected_code"),
+    [
+        ("Objective", "<current objective>", "STATE_OBJECTIVE_PLACEHOLDER"),
+        ("Responsibility", "<current responsibility>", "STATE_RESPONSIBILITY_PLACEHOLDER"),
+        ("Executor", "<current executor>", "STATE_EXECUTOR_PLACEHOLDER"),
+    ],
+)
+def test_state_field_template_placeholder_is_rejected_when_surrounded_by_text(
+    field: str,
+    placeholder: str,
+    expected_code: str,
+):
+    values = {
+        "Objective": "Demo",
+        "Responsibility": "Implementation",
+        "Executor": "Codex",
+    }
+    values[field] = f"Replace {placeholder} before release"
+    text = f"""# Current State
+
+Objective: {values['Objective']}
+Responsibility: {values['Responsibility']}
+Executor: {values['Executor']}
+
+## Current Work
+
+Working.
+
+## Relevant
+
+- README.md
+
+## Next
+
+Continue.
+"""
+
+    assert expected_code in codes(validate_state_text(text))
+
+
+def test_normal_markdown_and_technical_angle_brackets_are_not_placeholders():
+    project_text = """# Project
+
+Name: Generic <T> Parser
+Purpose: Parse Map<K, V> syntax and preserve <code> examples.
+
+## AI Collaboration
+
+- Keep C++ review with the current repository-capable executor.
+"""
+    state_text = """# Current State
+
+Objective: Support Result<T> parsing.
+Responsibility: Implementation <parser>
+Executor: Codex <local>
+
+## Current Work
+
+Implement `Map<K, V>` handling and document <code> elements.
+
+## Relevant
+
+- docs/generics.md
+
+## Next
+
+Verify parsing for `Result<T>`.
+"""
 
     assert "ERROR" not in levels(validate_project_text(project_text))
     assert "ERROR" not in levels(validate_state_text(state_text))

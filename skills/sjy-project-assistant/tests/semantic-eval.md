@@ -568,3 +568,39 @@ V1.2.1 is a documentation and contract-test consistency patch. It keeps Project 
 ### Superpowers-Enabled Semantic Validation
 
 The enabled Superpowers execution context was checked against the natural Responsibility transition scenario: the applicable preference surfaced once, explicit "continue here" in a capable current environment continued execution, the preference was not repeated before Responsibility completion/change, capability mismatch remained reportable, and the former forced recommend-preferred-executor / exact-resume-action / stop sequence was absent.
+
+---
+
+## V1.2.2 Hardening Patch Validation
+
+### Scope
+
+V1.2.2 is a quality and compatibility hardening patch. It keeps Project Protocol V1, Initialize / Adopt / Resume, sparse collaboration preferences, legacy Responsibility / Preferred Executor tables, and V1.2.1 Owner / STATE / PROJECT routing semantics unchanged.
+
+The patch:
+
+- moves the Python 3.10+ requirement from unsupported top-level Codex frontmatter into `metadata.compatibility` and the SKILL body;
+- rejects the exact Project Assistant PROJECT / STATE template placeholders without rejecting arbitrary angle-bracket Markdown or technical content;
+- moves PROJECT template guidance into an HTML comment;
+- broadens discovery metadata for fresh-context recovery, project-status questions, and cross-tool continuation while excluding ordinary scoped coding and Q&A;
+- adds a balanced, extensible trigger-eval dataset with 12 should-trigger and 12 should-not-trigger cases.
+
+### Compatibility Evidence
+
+- Current bundled Codex `quick_validate.py` rejected the V1.2.1 top-level `compatibility` field as unexpected.
+- The same bundled Codex validator accepts the final V1.2.2 SKILL frontmatter when run in UTF-8 mode.
+- Agent Skills `skills-ref` 0.1.1 accepts the final V1.2.2 skill directory.
+- The standalone `codex.exe` process could not be launched in this Windows session because the environment returned `Access is denied`; the bundled validator was used as the direct Codex schema check.
+
+### Deterministic Regression
+
+- Latest-main baseline: 59 passed, 4 skipped.
+- Focused protocol and V1.2 contract tests: 47 passed.
+- Full repository Skill test suite: 72 passed, 4 skipped.
+- Managed-active and managed-idle protocol CLI validation: PASS.
+- Unmodified PROJECT template: rejected with Name and Purpose placeholder errors.
+- Unmodified STATE template: rejected with Objective, Responsibility, Executor, Current Work, Relevant, and Next placeholder errors.
+- Valid PROJECT / STATE, sparse collaboration preferences, legacy Responsibility / Preferred Executor tables, CRLF documents, and technical angle-bracket content: PASS.
+- Python helper compilation: PASS.
+- `git diff --check`: PASS.
+- Project Protocol remains V1; no persistent state, workflow, routing, or product-scope expansion was added.
