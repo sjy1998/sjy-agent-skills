@@ -6,11 +6,7 @@ SJY 维护的个人 Agent Skills 仓库，用于沉淀和分发可复用的 AI A
 
 ## Skills
 
-| Skill | 简介 | 用途 |
-| --- | --- | --- |
-| [`sjy-project-assistant`](skills/sjy-project-assistant/) | AI Coding 项目治理与连续性助手 | 用于新项目初始化、已有项目接管、项目恢复，以及跨上下文或跨工具继续协作 |
-
-后续新增 Skills 将继续维护在 `skills/` 目录中。
+当前暂无现役公开 Skill。仓库继续作为多 Skill 仓库保留，后续新增 Skills 将继续维护在 `skills/` 目录中。
 
 ## 安装
 
@@ -66,10 +62,9 @@ Windows 环境如遇符号链接或权限问题，可在命令末尾增加 `--co
 ```text
 sjy-agent-skills/
 ├── skills/
-│   ├── sjy-project-assistant/
-│   │   ├── SKILL.md
-│   │   └── ...
 │   └── ...
+├── docs/
+│   └── retired/
 ├── README.md
 └── LICENSE
 ```
