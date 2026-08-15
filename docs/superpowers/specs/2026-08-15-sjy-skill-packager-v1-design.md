@@ -91,11 +91,13 @@ V1 therefore treats `.agents/skills` as the primary local discovery convention a
 
 ### 3.4 `agents/openai.yaml`
 
-`agents/openai.yaml` is an official **optional** OpenAI Skill metadata file. It can describe interface metadata, invocation policy, and tool dependencies.
+`agents/openai.yaml` is an official **optional** OpenAI Skill metadata file. OpenAI currently documents it for interface metadata (explicitly including ChatGPT desktop appearance), invocation policy, and tool dependencies.
+
+V1 does not assume that every documented interface field is required for ChatGPT Web upload or has identical UI effects on every ChatGPT surface.
 
 V1 behavior:
 
-- if the file exists, preserve it and validate its basic structure;
+- if the file exists, preserve it and validate its basic documented structure;
 - if the file does not exist, that is valid;
 - V1 does not synthesize `agents/openai.yaml` or icons.
 
@@ -319,7 +321,7 @@ V1 validates the Agent Skills specification strictly for packaging:
 
 Optional fields are checked when present:
 
-- `license` has a representable scalar value;
+- `license` is a string;
 - `compatibility` is a non-empty string no longer than 500 characters;
 - `metadata` is a mapping from string keys to string values;
 - `allowed-tools` is a string; support is experimental across Agent implementations.
@@ -565,7 +567,7 @@ At minimum V1 tests:
 5. reject unparseable frontmatter YAML;
 6. reject missing/invalid `name` and `description`;
 7. enforce name-directory match and Agent Skills naming constraints;
-8. validate optional `compatibility`, `metadata`, and `allowed-tools` when present;
+8. validate optional `license`, `compatibility`, `metadata`, and `allowed-tools` when present;
 9. preserve a valid existing `agents/openai.yaml` byte-for-byte;
 10. reject malformed `agents/openai.yaml`;
 11. validate local OpenAI icon paths without requiring icons;
