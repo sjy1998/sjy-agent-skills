@@ -2,17 +2,19 @@
 
 SJY 维护的个人 Agent Skills 集合仓库，用于沉淀、测试和分发可复用的 AI Agent 能力，主要面向 Codex、Claude Code 以及其他兼容 Agent Skills 的工具。
 
-本仓库采用 **multi-skill monorepo**：所有可安装 Skill 统一放在 [`skills/`](skills/) 下；仓库级设计、计划、退役记录等研发文档统一放在 [`docs/`](docs/) 下，与 Skill 运行时文件分离。
+本仓库采用 **multi-skill monorepo**：所有可安装 Skill 统一放在 [`skills/`](skills/) 下；仓库级 Design、Plan、Research、Decision、Retirement 等研发文档统一放在 [`docs/`](docs/) 下，与 Skill 运行时文件分离。
 
 ## Skills
 
-当前暂无现役公开 Skill。
+当前暂无完成真实目标平台验收并标记为现役的 Skill。
 
-正在设计：
+### 开发中
 
-- `sjy-skill-packager`：将 Codex / Claude 本地已安装的 Agent Skill 验证并打包为可供 ChatGPT Web 上传的 ZIP。设计文档见 [`docs/sjy-skill-packager/design.md`](docs/sjy-skill-packager/design.md)。
+- `sjy-skill-packager`：验证 Codex / Claude 本地已安装的 Agent Skill，并生成用于 ChatGPT Web 手工上传的确定性 ZIP；不会修改源 Skill。自动化、端到端和自举打包已通过，真实 ChatGPT Web 上传验收仍待完成，因此当前不标记为现役发布。
+  - Design：[`docs/sjy-skill-packager/2026-08-15-v1-design.md`](docs/sjy-skill-packager/2026-08-15-v1-design.md)
+  - Plan：[`docs/sjy-skill-packager/plans/2026-08-15-v1-chatgpt-web-packaging.md`](docs/sjy-skill-packager/plans/2026-08-15-v1-chatgpt-web-packaging.md)
 
-后续新增 Skills 将继续维护在 `skills/<skill-name>/` 目录中。
+后续新增 Skills 继续维护在 `skills/<skill-name>/` 目录中。
 
 ## 安装
 
@@ -44,15 +46,13 @@ Windows 环境如遇符号链接或权限问题，可在命令末尾增加 `--co
 
 ## 如何使用 Skills
 
-安装后，Agent 会根据任务和 Skill 描述决定是否加载相应 Skill。
-
-通常只需要直接描述任务；如需明确指定，也可以在提示词中写：
+安装后，Agent 会根据任务和 Skill 描述决定是否加载相应 Skill。通常只需要直接描述任务；如需明确指定，也可以在提示词中写：
 
 ```text
 请使用 <skill-name> 完成这个任务。
 ```
 
-具体 Skill 的能力与规则，以对应 Skill 目录中的 `SKILL.md` 为准。
+具体 Skill 的能力、输入、输出和安全边界，以对应 Skill 目录中的 `SKILL.md` 为准。
 
 ## 支持的 Agent
 
@@ -65,8 +65,6 @@ Windows 环境如遇符号链接或权限问题，可在命令末尾增加 `--co
 
 ## 仓库结构
 
-本仓库参考 OpenAI `openai/skills` 与 Anthropic `anthropics/skills` 的集合式结构：**仓库管理多个 Skill，每个可安装 Skill 自成目录，运行时内容与仓库研发资料分离。**
-
 ```text
 sjy-agent-skills/
 ├── skills/
@@ -76,41 +74,50 @@ sjy-agent-skills/
 │       ├── references/           # 可选：Skill 运行时参考资料
 │       ├── scripts/              # 可选：Skill 运行时辅助脚本
 │       ├── assets/               # 可选：模板、图标等运行时资源
-│       └── LICENSE.txt           # 可选：Skill 需要独立许可证时使用
+│       └── LICENSE.txt           # 可选：Skill 独立许可证
 │
 ├── docs/
 │   ├── README.md                 # 仓库文档组织规则
 │   ├── <skill-name>/
-│   │   ├── design.md             # 当前已认可的设计基线
-│   │   ├── plans/                # 可选：实施计划
-│   │   ├── research/             # 可选：专项调研
-│   │   └── decisions/            # 可选：重要设计决策 / ADR
+│   │   ├── YYYY-MM-DD-vN-design.md
+│   │   ├── plans/
+│   │   │   └── YYYY-MM-DD-vN-<topic>.md
+│   │   ├── research/
+│   │   │   └── YYYY-MM-DD-<topic>.md
+│   │   └── decisions/
+│   │       └── YYYY-MM-DD-<topic>.md
 │   └── retired/
 │       └── <skill-name>/
-│           └── retirement.md     # 退役记录
+│           └── retirement.md
 │
 ├── tests/
-│   └── <skill-name>/             # 可选：仓库级开发/回归测试，不随 Skill 安装
+│   └── <skill-name>/             # 仓库级开发/回归测试，不随 Skill 安装
 │
 ├── README.md
 ├── LICENSE
 └── .gitignore
 ```
 
-### 结构原则
+### 结构与命名原则
 
 - `skills/<skill-name>/` 只放 **Skill 自身运行和分发所需内容**；
-- `docs/<skill-name>/` 只放 **该 Skill 的研发文档**，第一层按 Skill 归属组织，而不是按开发工具组织；
-- Design 使用 `docs/<skill-name>/design.md` 作为当前设计基线，历史变化由 Git 记录；
-- 实施计划、Research、ADR 仅在确有需要时创建对应子目录；
-- 开发期测试优先放在仓库级 `tests/<skill-name>/`，避免无意义地进入 Skill 安装包；
-- 不在仓库信息架构中使用 `superpowers`、`codex`、`claude` 等开发工具名称作为文档分类层级；
-- `spec/`、`template/` 等仓库级目录只有在未来出现真正的跨 Skill 共享规范或模板需求时再增加，不照搬上游仓库结构。
+- `docs/<skill-name>/` 只放 **该 Skill 的研发文档**；
+- Design：`YYYY-MM-DD-vN-design.md`；
+- Plan：`YYYY-MM-DD-vN-<specific-topic>.md`；
+- Research：`YYYY-MM-DD-<topic>.md`；
+- Decision：`YYYY-MM-DD-<topic>.md`；
+- 日期表示该基线形成日期；`vN` 表示产品 / 设计基线，不表示每次文字编辑修订；
+- 同一基线的小修订继续更新原文件，由 Git 保存历史；真正形成下一代设计时再创建 `v2` / `v3`；
+- Design / Plan 默认使用中文，代码标识符、路径、状态码和官方字段名保留英文；
+- 开发期测试优先放在仓库级 `tests/<skill-name>/`；
+- 不使用 `superpowers`、`codex`、`claude` 等开发工具名称作为仓库文档分类层级；
+- `spec/`、`template/`、`shared/` 等仓库级共享目录只在多个 Skill 确有共同依赖时再创建。
 
 ## 文档
 
-- [`docs/README.md`](docs/README.md)：仓库文档组织规则；
-- [`docs/sjy-skill-packager/design.md`](docs/sjy-skill-packager/design.md)：`sjy-skill-packager` 当前设计；
+- [`docs/README.md`](docs/README.md)：仓库文档组织与开发流程规则；
+- [`docs/sjy-skill-packager/2026-08-15-v1-design.md`](docs/sjy-skill-packager/2026-08-15-v1-design.md)：`sjy-skill-packager` V1 Design；
+- [`docs/sjy-skill-packager/plans/2026-08-15-v1-chatgpt-web-packaging.md`](docs/sjy-skill-packager/plans/2026-08-15-v1-chatgpt-web-packaging.md)：V1 ChatGPT Web packaging 实施计划；
 - [`docs/retired/sjy-project-assistant/retirement.md`](docs/retired/sjy-project-assistant/retirement.md)：`sjy-project-assistant` 退役记录。
 
 ## Links
